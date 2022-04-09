@@ -1,0 +1,9 @@
+.input-class {
+	padding: 0.5rem 0.5rem;
+	background-color: var(--input-color);
+	outline: none;
+	border: 0px;
+	font-size: var(--large-font-size);
+	border-radius: 6px;
+	border: 1px solid #dddfe2;
+}

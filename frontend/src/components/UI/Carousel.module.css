@@ -1,0 +1,19 @@
+.carousel {
+	display: flex;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	height: calc(100%);
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+.carousel::-webkit-scrollbar {
+	display: none;
+}
+.carousel img {
+	height: calc(100%);
+}
+.wrapper-div {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}

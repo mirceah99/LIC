@@ -1,0 +1,33 @@
+.profile-picture {
+	border: solid 1px black;
+	width: 35vw;
+	height: 35vw;
+	max-width: 200px;
+	max-height: 200px;
+	border-radius: var(--border-radius);
+}
+.user-name {
+	font-size: 28px;
+	font-weight: 700;
+}
+.picture-and-username {
+	background-color: floralwhite;
+	padding: 5px;
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+.updatable-info {
+	margin: 10px;
+	font-size: 18px;
+	max-width: 450px;
+}
+.updatable-info div {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.updatable-info label {
+	margin-right: auto;
+}

@@ -1,0 +1,7 @@
+.horizontal-line {
+	padding: 0px !important;
+	height: 0.2px;
+	background-color: #bbb2b2;
+	width: 92% !important;
+	margin: 10px auto;
+}

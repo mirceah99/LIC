@@ -1,0 +1,19 @@
+/* CSS */
+.button {
+	background-color: var(--action-color);
+	color: var(--black);
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	border: 0;
+	user-select: none;
+	-webkit-user-select: none;
+	border-radius: var(--border-radius);
+	font-size: 1.2rem;
+	padding: 0.5rem 4rem;
+}
+.button:disabled {
+	cursor: not-allowed;
+	background-color: var(--disabled-color-bg);
+	color: var(--disabled-color-text);
+}
