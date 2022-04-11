@@ -1356,6 +1356,71 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error"
+    delete:
+      tags:
+        - users
+      summary: Delete User By UID
+      description: Delete User By UID
+      operationId: deleteUserByUID
+      parameters:
+        - in: path
+          name: userUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the User
+      requestBody:
+        description: Password for confirmation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password"
+      responses:
+        "200":
+          description: OK. User succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User successfully deleted!"
+        "400":
+          description: Bad Request. Incomplete or wrong request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body must contain password for deleting user!"
+        "404":
+          description: Not Found. User does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /users/password/{userUID}:
     put:
       tags:
         - users
@@ -1408,70 +1473,6 @@ paths:
                   message:
                     type: string
                     example: "Body must contain old password for updating user!"
-        "404":
-          description: Not Found. User does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User does not exist"
-        "500":
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
-    delete:
-      tags:
-        - users
-      summary: Delete User By UID
-      description: Delete User By UID
-      operationId: deleteUserByUID
-      parameters:
-        - in: path
-          name: userUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the User
-      requestBody:
-        description: Password for confirmation
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  example: "password"
-      responses:
-        "200":
-          description: OK. User succesfully deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User successfully deleted!"
-        "400":
-          description: Bad Request. Incomplete or wrong request body
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Body must contain password for deleting user!"
         "404":
           description: Not Found. User does not exist
           content:

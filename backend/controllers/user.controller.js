@@ -56,7 +56,7 @@ exports.getUserByUsernameAndPassword = async (req, res) => {
 	}
 };
 
-exports.updateUser = async (req, res) => {
+exports.updateUserPassword = async (req, res) => {
 	try {
 		if (!req.body?.oldPassword) {
 			return res.status(400).json({
