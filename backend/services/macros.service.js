@@ -1,4 +1,4 @@
-const { macros } = require('../models/index');
+const { macros } = require("../models/index");
 
 exports.addMacro = async (macro) => {
 	return await macros.create({
@@ -27,4 +27,24 @@ exports.getMacro = async (id) => {
 		monounsaturated: macro.monounsaturated,
 		trans: macro.trans,
 	};
+};
+
+exports.updateMacro = async (id, newMacro) => {
+	const macro = (await macros.findByPk(id)).dataValues;
+	await macros.update(
+		{
+			protein: newMacro.link || macro.link,
+			carbs: newMacro.name || macro.name,
+			fat: newMacro.fat || macro.fat,
+			fiber: newMacro.fiber || macro.fiber,
+			sugar: newMacro.sugar || macro.sugar,
+			saturated: newMacro.saturated || macro.saturated,
+			polyunsaturated: newMacro.polyunsaturated || macro.polyunsaturated,
+			monounsaturated: newMacro.monounsaturated || macro.monounsaturated,
+			trans: newMacro.trans || macro.trans,
+		},
+		{
+			where: { id: id },
+		}
+	);
 };

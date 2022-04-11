@@ -31,3 +31,7 @@
 .updatable-info label {
 	margin-right: auto;
 }
+.update-button {
+	display: flex;
+	justify-content: space-around;
+}

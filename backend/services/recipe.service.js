@@ -1,84 +1,56 @@
-const { recipes } = require('../models/index');
-const { makeLink, decryptId } = require('../middleware/utilities');
-const ImageService = require('./image.service');
-const TagService = require('./tag.service');
-const InstructionService = require('./instruction.service');
-const IngredientService = require('./ingredient.service');
-const UstensilService = require('./ustensil.service');
+const { recipes } = require("../models/index");
+const { makeLink, decryptId } = require("../middleware/utilities");
+const ImageService = require("./image.service");
+const TagService = require("./tag.service");
+const InstructionService = require("./instruction.service");
+const IngredientService = require("./ingredient.service");
+const UstensilService = require("./ustensil.service");
 
-const base = '/recipes/';
+const base = "/recipes/";
 
 exports.addRecipe = async (recipe) => {
-	try {
-		const addedRecipe = await recipes.create({
-			name: recipe.name,
-			description: recipe.description,
-			prepTime: recipe.prepTime,
-			cookingTime: recipe.cookingTime,
-			servingSize: recipe.servingSize,
-			likes: 0,
-		});
+	const addedRecipe = await recipes.create({
+		name: recipe.name,
+		description: recipe.description,
+		prepTime: recipe.prepTime,
+		cookingTime: recipe.cookingTime,
+		servingSize: recipe.servingSize,
+		likes: 0,
+	});
 
-		return makeLink(base, addedRecipe.dataValues.id.toString());
-	} catch (e) {
-		throw Error(e);
-	}
+	return makeLink(base, addedRecipe.dataValues.id.toString());
 };
 
 exports.getRecipeById = async (encryptedId) => {
-	try {
-		const decryptedId = decryptId(encryptedId)[0];
-		const recipe = (await recipes.findByPk(decryptedId)).dataValues;
-		let recipeResponse = {
-			name: recipe.name,
-			description: recipe.description,
-			prepTime: recipe.prepTime,
-			cookingTime: recipe.cookingTime,
-			servingSize: recipe.servingSize,
-			likes: recipe.likes,
-		};
-		return recipeResponse;
-	} catch (e) {
-		throw Error(e);
-	}
+	const decryptedId = decryptId(encryptedId)[0];
+	const recipe = (await recipes.findByPk(decryptedId)).dataValues;
+	let recipeResponse = {
+		name: recipe.name,
+		description: recipe.description,
+		prepTime: recipe.prepTime,
+		cookingTime: recipe.cookingTime,
+		servingSize: recipe.servingSize,
+		likes: recipe.likes,
+	};
+	return recipeResponse;
 };
 
 exports.addImageToRecipe = async (image, recipeId) => {
-	try {
-		await ImageService.addImageToRecipe(image, recipeId);
-	} catch (e) {
-		throw Error(e);
-	}
-}
+	await ImageService.addImageToRecipe(image, recipeId);
+};
 
 exports.linkTagToRecipe = async (tagId, recipeId) => {
-	try {
-		await TagService.linkTagToRecipe(tagId, recipeId);
-	} catch (e) {
-		throw Error(e);
-	}
-}
+	await TagService.linkTagToRecipe(tagId, recipeId);
+};
 
 exports.addInstructionToRecipe = async (instruction, recipeId) => {
-	try {
-		await InstructionService.addInstructionToRecipe(instruction, recipeId);
-	} catch (e) {
-		throw Error(e);
-	}
-}
+	await InstructionService.addInstructionToRecipe(instruction, recipeId);
+};
 
 exports.linkIngredientToRecipe = async (ingredientForRecipe, recipeId) => {
-	try {
-		await IngredientService.linkIngredientToRecipe(ingredientForRecipe, recipeId);
-	} catch (e) {
-		throw Error(e);
-	}
-}
+	await IngredientService.linkIngredientToRecipe(ingredientForRecipe, recipeId);
+};
 
 exports.linkUstensilToRecipe = async (ustensilId, recipeId) => {
-	try {
-		await UstensilService.linkUstensilToRecipe(ustensilId, recipeId);
-	} catch (e) {
-		throw Error(e);
-	}
-}
+	await UstensilService.linkUstensilToRecipe(ustensilId, recipeId);
+};

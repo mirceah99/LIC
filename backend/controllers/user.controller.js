@@ -11,14 +11,14 @@ exports.addUser = async (req, res) => {
 		if (req.body.username.search("@") !== -1) {
 			console.log("okay");
 			return res.status(400).json({
-				message: "⚠️Username can't contain @!⚠️",
+				message: "️Username can't contain @!",
 			});
 		}
 
 		const userLink = await UserService.addUser(req.body);
 		return res
 			.status(200)
-			.json({ data: userLink, message: "Successfully registration!✔️" });
+			.json({ data: userLink, message: "Successful registration!" });
 	} catch (e) {
 		console.log(e);
 		return res.status(e.statusCode || 500).json({ message: e.message });

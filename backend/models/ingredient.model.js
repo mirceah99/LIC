@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define(
-		'ingredient',
+		"ingredient",
 		{
 			name: {
 				type: DataTypes.STRING,
@@ -8,6 +8,6 @@ module.exports = (sequelize, DataTypes) => {
 				unique: true,
 			},
 		},
-		{ timestamps: false },
+		{ timestamps: false }
 	);
 };

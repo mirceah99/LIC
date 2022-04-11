@@ -1,9 +1,9 @@
-const AuthorService = require('../services/author.service');
+const AuthorService = require("../services/author.service");
 
 exports.addAuthor = async (req, res) => {
 	if (!req.body?.name) {
 		res.status(400).json({
-			message: 'Body should contain name!',
+			message: "Body should contain name!",
 		});
 	}
 
@@ -11,39 +11,43 @@ exports.addAuthor = async (req, res) => {
 		const authorLink = await AuthorService.addAuthor(req.body);
 		return res.status(200).json({
 			data: authorLink,
-			message: 'Author succesfully added to database',
+			message: "Author succesfully added to database",
 		});
 	} catch (e) {
-		return res.status(e.statusCode).json({ message: e.message });
+		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
 
 exports.getAuthorByUID = async (req, res) => {
 	try {
 		const author = await AuthorService.getAuthorByUID(req.params.id);
-		return res.status(200)
-			.json({ data: author, message: 'Author successfully retrieved' });
+		return res
+			.status(200)
+			.json({ data: author, message: "Author successfully retrieved" });
 	} catch (e) {
-		return res.status(e.statusCode).json({ message: e.message });
+		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
 
 exports.updateAuthorByUID = async (req, res) => {
 	try {
-		const authorLink = await AuthorService.updateAuthorByUID(req.params.id, req.body);
-		return res.status(200)
-			.json({ data: authorLink, message: 'Author successfully updated' });
+		const authorLink = await AuthorService.updateAuthorByUID(
+			req.params.id,
+			req.body
+		);
+		return res
+			.status(200)
+			.json({ data: authorLink, message: "Author successfully updated" });
 	} catch (e) {
-		return res.status(e.statusCode).json({ message: e.message });
+		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
 
 exports.deleteAuthorByUID = async (req, res) => {
 	try {
-		const authorLink = await AuthorService.deleteAuthorByUID(req.params.id);
-		return res.status(200)
-			.json({ data: authorLink, message: 'Author successfully deleted' });
+		await AuthorService.deleteAuthorByUID(req.params.id);
+		return res.status(200).json({ message: "Author successfully deleted" });
 	} catch (e) {
-		return res.status(e.statusCode).json({ message: e.message });
+		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };

@@ -6,89 +6,41 @@ info:
 servers:
   - url: api
 tags:
-  - name: user
-    description: Handles User operations
-  - name: ingredient
+  - name: authors
+    description: Handles Author operations
+  - name: ingredients
     description: Handles Ingredient operations
+  - name: tags
+    description: Handles Tag operations
+  - name: users
+    description: Handles User operations
 paths:
-  /users:
-    get:
-      tags:
-        - user
-      summary: Get User By Username and Password
-      description: Gets User Info by Username and Password
-      operationId: getUserByUsernamePassword
-      requestBody:
-        description: An User Object
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: "username123"
-                password:
-                  type: string
-                  example: "password"
-      responses:
-        '200':
-          description: OK. User succesfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: string
-                    example: "http://localhost:8080/api/users/DoARzpyNG8mx5Ke6bvnM"
-                  message:
-                    type: string
-                    example: "User successfully retrieved"
-        '404':
-          description: Not Found. User does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User does not exist"
-        '500':
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
+  /authors:
     post:
       tags:
-        - user
-      summary: Add User
-      description: Adds an User
-      operationId: addUser
+        - authors
+      summary: Add Author
+      description: Adds an author
+      operationId: addAuthor
       requestBody:
-        description: An User Object
-        required: true
+        description: An Author Object
         content:
           application/json:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-                  example: "username123"
-                password:
+                  example: John
+                link:
                   type: string
-                  example: "password"
+                  format: uri
+                  example: "www.example.com/john"
+              required:
+                - name
       responses:
-        '200':
-          description: OK. User succesfully added to database
+        "200":
+          description: OK. Author succesfully added to database
           content:
             application/json:
               schema:
@@ -96,11 +48,11 @@ paths:
                 properties:
                   data:
                     type: string
-                    example: "http://localhost:8080/api/users/3PXW8J1QGkQlZgnjOaKv"
+                    example: "http://localhost:8080/api/authors/3PXW8J1QGkQlZgnjOaKv"
                   message:
                     type: string
-                    example: "User successfully added to database"
-        '400':
+                    example: "Author successfully added to database"
+        "400":
           description: Bad Request. Incomplete Request Body
           content:
             application/json:
@@ -109,18 +61,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Body should contain username and password"
-        '409':
-          description: Conflict. Username already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Username already exists"
-        '500':
+                    example: "Body should contain name"
+        "500":
           description: Internal Server Error. Some Error occured
           content:
             application/json:
@@ -130,23 +72,22 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error"
-  /users/{userUID}:
+  /authors/{authorUID}:
     get:
       tags:
-        - user
-      summary: Get User By UID
-      description: Gets User Info by UID
-      operationId: getUserByUID
+        - authors
+      summary: Get Author By UID
+      operationId: getAuthorByUID
       parameters:
         - in: path
-          name: userUID
+          name: authorUID
           schema:
             type: string
           required: true
-          description: The UID of the User
+          description: The UID of the author
       responses:
-        '200':
-          description: OK. User succesfully retrieved
+        "200":
+          description: OK. Author successfully retrieved
           content:
             application/json:
               schema:
@@ -155,36 +96,18 @@ paths:
                   data:
                     type: object
                     properties:
-                      username:
+                      name:
                         type: string
-                        example: "username123"
-                      youTube:
+                        example: "John"
+                      link:
                         type: string
-                        example: "www.youtube.com/username123"
-                      instagram:
-                        type: string
-                        example: "www.instagram.com/username123"
-                      facebook:
-                        type: string
-                        example: "www.facebook.com/username123"
-                      twitter:
-                        type: string
-                        example: "www.twitter.com/username123"
-                      tikTok:
-                        type: string
-                        example: "www.tikTok.com/username123"
-                      reddit:
-                        type: string
-                        example: "www.reddit.com/username123"
-                    createdAt:
-                      type: string
-                      format: date-time
-                      example: "2022-03-22T12:34:52.294Z"
+                        format: uri
+                        example: "www.example.com/john"
                   message:
                     type: string
-                    example: "User successfully retrieved"
-        '404':
-          description: Not Found. User does not exist
+                    example: "Author successfully retrieved"
+        "404":
+          description: Not Found. Author does not exist
           content:
             application/json:
               schema:
@@ -192,8 +115,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User does not exist"
-        '500':
+                    example: "Author does not exist"
+        "500":
           description: Internal Server Error. Some Error occured
           content:
             application/json:
@@ -205,35 +128,36 @@ paths:
                     example: "Internal Server Error"
     put:
       tags:
-        - user
-      summary: Update User By UID
-      description: Update User Info By UID
-      operationId: updateUserByUID
+        - authors
+      summary: Update Author By UID
+      description: Update Author Info By UID
+      operationId: UpdateAuthorByUID
       parameters:
         - in: path
           name: userUID
           schema:
             type: string
           required: true
-          description: The UID of the User
+          description: The UID of the Author
       requestBody:
-        description: New Password and Old Password. Username cannot be changed.
+        description: An Author Object
         content:
           application/json:
             schema:
               type: object
               properties:
-                oldPassword:
+                name:
                   type: string
-                  example: "password"
-                newPassword:
+                  example: John
+                link:
                   type: string
-                  example: "password1"
+                  format: uri
+                  example: "www.example.com/john"
               required:
-                - oldPassword
+                - name
       responses:
-        '200':
-          description: OK. User succesfully updated
+        "200":
+          description: OK. Author succesfully updated
           content:
             application/json:
               schema:
@@ -241,12 +165,12 @@ paths:
                 properties:
                   data:
                     type: string
-                    example: "http://localhost:8080/api/users/3PXW8J1QGkQlZgnjOaKv"
+                    example: "http://localhost:8080/api/authors/3PXW8J1QGkQlZgnjOaKv"
                   message:
                     type: string
-                    example: "User successfully updated!"
-        '400':
-          description: Bad Request. Incomplete or wrong request body
+                    example: "Author successfully updated!"
+        "404":
+          description: Not Found. Author does not exist
           content:
             application/json:
               schema:
@@ -254,18 +178,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Body must contain old password for updating user!"
-        '404':
-          description: Not Found. User does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User does not exist"
-        '500':
+                    example: "Author does not exist"
+        "500":
           description: Internal Server Error. Some Error occured
           content:
             application/json:
@@ -277,30 +191,20 @@ paths:
                     example: "Internal Server Error"
     delete:
       tags:
-        - user
-      summary: Delete User By UID
-      description: Delete User Info By UID
+        - authors
+      summary: Delete Author By UID
+      description: Delete Author By UID
       operationId: deleteUserByUID
       parameters:
         - in: path
-          name: userUID
+          name: authorUID
           schema:
             type: string
           required: true
-          description: The UID of the User
-      requestBody:
-        description: Password for confirmation
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  example: "password"
+          description: The UID of the Author
       responses:
-        '200':
-          description: OK. User succesfully deleted
+        "200":
+          description: OK. Author succesfully deleted
           content:
             application/json:
               schema:
@@ -308,9 +212,9 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User successfully deleted!"
-        '400':
-          description: Bad Request. Incomplete or wrong request body
+                    example: "Author successfully deleted!"
+        "404":
+          description: Not Found. Author does not exist
           content:
             application/json:
               schema:
@@ -318,135 +222,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Body must contain password for deleting user!"
-        '404':
-          description: Not Found. User does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User does not exist"
-        '500':
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
-  /ingredients/{ingredientUID}:
-    get:
-      tags:
-        - ingredient
-      summary: Get Ingredient By UID
-      description: Gets Ingredient Info by UID
-      operationId: getIngredientByUID
-      parameters:
-        - in: path
-          name: ingreedientUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the Ingredient
-      responses:
-        '200':
-          description: OK. Ingredient succesfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        example: "Malai"
-                      macros:
-                        type: object
-                        properties:
-                          protein:
-                            type: number
-                            format: float
-                            example: 30.2
-                          carbs:
-                            type: number
-                            format: float
-                            example: 50.5
-                          fat:
-                            type: number
-                            format: float
-                            example: 20.5
-                          fiber:
-                            type: number
-                            format: float
-                            example: 5.1
-                          sugar:
-                            type: number
-                            format: float
-                            example: 15.3
-                          saturated:
-                            type: number
-                            format: float
-                            example: 5.3
-                          polyunsaturated:
-                            type: number
-                            format: float
-                            example: 3.2
-                          monounsaturated:
-                            type: number
-                            format: float
-                            example: 2.0
-                          trans:
-                            type: number
-                            format: float
-                            example: 0
-                      micros:
-                        type: object
-                        properties:
-                          sodium:
-                            type: number
-                            format: float
-                            example: 2300
-                          potassium:
-                            type: number
-                            format: float
-                            example: null
-                          vitaminA:
-                            type: number
-                            format: float
-                            example: null
-                          vitaminC:
-                            type: number
-                            format: float
-                            example: null
-                          calcium:
-                            type: number
-                            format: float
-                            example: null
-                          iron:
-                            type: number
-                            format: float
-                            example: null
-                  message:
-                    type: string
-                    example: "Ingredient successfully retrieved"
-        '404':
-          description: Not Found. Ingredient does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User does not exist"
-        '500':
+                    example: "Author does not exist"
+        "500":
           description: Internal Server Error. Some Error occured
           content:
             application/json:
@@ -459,7 +236,7 @@ paths:
   /ingredients:
     post:
       tags:
-        - ingredient
+        - ingredients
       summary: Add Ingredient
       description: Adds an Ingredient
       operationId: addIngredient
@@ -548,7 +325,7 @@ paths:
                 - name
                 - macros
       responses:
-        '200':
+        "200":
           description: OK. Ingredient succesfully added to database
           content:
             application/json:
@@ -561,7 +338,7 @@ paths:
                   message:
                     type: string
                     example: "Ingredient successfully added to database"
-        '400':
+        "400":
           description: Bad Request. Incomplete Request Body
           content:
             application/json:
@@ -571,7 +348,7 @@ paths:
                   message:
                     type: string
                     example: "Body should contain name and macros!"
-        '409':
+        "409":
           description: Conflict. Ingredient already exists
           content:
             application/json:
@@ -581,7 +358,1131 @@ paths:
                   message:
                     type: string
                     example: "Ingredient already exists"
-        '500':
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientUID}/unit:
+    post:
+      tags:
+        - ingredients
+      summary: Add Ingredient Unit To Ingredient
+      description: Adds Ingredient Unit to Ingredient
+      operationId: addIngredientUnitToIngredient
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+      requestBody:
+        description: An Author Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unitOfMeasurement:
+                  type: string
+                  example: John
+                miligrams:
+                  type: string
+                  format: uri
+                  example: "www.example.com/john"
+              required:
+                - unitOfMeasurement
+                - miligrams
+      responses:
+        "200":
+          description: OK. Ingredient Unit succesfully added to database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkQlZgnjOaKv/cup"
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain unit of measurement and miligrams!"
+        "409":
+          description: Conflict. Ingredient Unit already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientUID}/unit/{unit}:
+    get:
+      tags:
+        - ingredients
+      summary: Get Ingredient Unit of Ingredient
+      description: Get Ingredient Unit of Ingredient
+      operationId: getIngredientUnitOfIngredient
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      miligrams:
+                        type: integer
+                        example: 100
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully retrieved"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    put:
+      tags:
+        - ingredients
+      summary: Update Ingredient Unit By UID
+      description: Updates Ingredient Unit by UID
+      operationId: updateIngredientUnitByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkl5gnjOaKvw/unit/cup"
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully updated"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - ingredients
+      summary: Delete Ingredient Unit By UID
+      description: Delete Ingredient Unit By UID
+      operationId: deleteIngredientUnitByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully deleted"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientName}:
+    get:
+      tags:
+        - ingredients
+      summary: Get Ingredient By Name
+      description: Gets Ingredient UID by Name
+      operationId: getIngredientByName
+      parameters:
+        - in: path
+          name: ingredientName
+          schema:
+            type: string
+          required: true
+          description: The Name of the Ingredient
+      responses:
+        "200":
+          description: OK. Ingredient succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/DoARzpyNG8mx5Ke6bvnM"
+                  message:
+                    type: string
+                    example: "Ingredient successfully retrieved"
+        "404":
+          description: Not Found. Ingredient does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientUID}:
+    get:
+      tags:
+        - ingredients
+      summary: Get Ingredient By UID
+      description: Gets Ingredient Info by UID
+      operationId: getIngredientByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+      responses:
+        "200":
+          description: OK. Ingredient succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Malai"
+                      macros:
+                        type: object
+                        properties:
+                          protein:
+                            type: number
+                            format: float
+                            example: 30.2
+                          carbs:
+                            type: number
+                            format: float
+                            example: 50.5
+                          fat:
+                            type: number
+                            format: float
+                            example: 20.5
+                          fiber:
+                            type: number
+                            format: float
+                            example: 5.1
+                          sugar:
+                            type: number
+                            format: float
+                            example: 15.3
+                          saturated:
+                            type: number
+                            format: float
+                            example: 5.3
+                          polyunsaturated:
+                            type: number
+                            format: float
+                            example: 3.2
+                          monounsaturated:
+                            type: number
+                            format: float
+                            example: 2.0
+                          trans:
+                            type: number
+                            format: float
+                            example: 0
+                      micros:
+                        type: object
+                        properties:
+                          sodium:
+                            type: number
+                            format: float
+                            example: 2300
+                          potassium:
+                            type: number
+                            format: float
+                            example: null
+                          vitaminA:
+                            type: number
+                            format: float
+                            example: null
+                          vitaminC:
+                            type: number
+                            format: float
+                            example: null
+                          calcium:
+                            type: number
+                            format: float
+                            example: null
+                          iron:
+                            type: number
+                            format: float
+                            example: null
+                  message:
+                    type: string
+                    example: "Ingredient successfully retrieved"
+        "404":
+          description: Not Found. Ingredient does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    put:
+      tags:
+        - ingredients
+      summary: Update Ingredient By UID
+      description: Update Ingredient Info By UID
+      operationId: updateIngredientByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+      requestBody:
+        description: Ingredient Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Rosie"
+                macros:
+                  type: object
+                  properties:
+                    protein:
+                      type: number
+                      format: float
+                      example: 30.2
+                    carbs:
+                      type: number
+                      format: float
+                      example: 50.5
+                    fat:
+                      type: number
+                      format: float
+                      example: 20.5
+                    fiber:
+                      type: number
+                      format: float
+                      example: 5.1
+                    sugar:
+                      type: number
+                      format: float
+                      example: 15.3
+                    saturated:
+                      type: number
+                      format: float
+                      example: 5.3
+                    polyunsaturated:
+                      type: number
+                      format: float
+                      example: 3.2
+                    monounsaturated:
+                      type: number
+                      format: float
+                      example: 2.0
+                    trans:
+                      type: number
+                      format: float
+                      example: 0
+                  required:
+                    - protein
+                    - carbs
+                    - fat
+                micros:
+                  type: object
+                  properties:
+                    sodium:
+                      type: number
+                      format: float
+                      example: 2300
+                    potassium:
+                      type: number
+                      format: float
+                      example: null
+                    vitaminA:
+                      type: number
+                      format: float
+                      example: null
+                    vitaminC:
+                      type: number
+                      format: float
+                      example: null
+                    calcium:
+                      type: number
+                      format: float
+                      example: null
+                    iron:
+                      type: number
+                      format: float
+                      example: null
+      responses:
+        "200":
+          description: OK. Ingredient succesfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "Ingredient successfully updated!"
+        "404":
+          description: Not Found. Ingredient does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - ingredients
+      summary: Delete Ingredient By UID
+      description: Delete Ingredient By UID
+      operationId: deleteIngredientByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+      responses:
+        "200":
+          description: OK. Ingredient succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient successfully deleted!"
+        "404":
+          description: Not Found. Ingredient does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /tags:
+    post:
+      tags:
+        - tags
+      summary: Add Tag
+      description: Adds a Tag
+      operationId: addTag
+      requestBody:
+        description: A Tag Object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: "Tag 1"
+      responses:
+        "200":
+          description: OK. Tag succesfully added to database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/tags/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "Tag successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain text!"
+        "409":
+          description: Conflict. Tag already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tag already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /tags/{tagUID}:
+    get:
+      tags:
+        - tags
+      summary: Get Tag By UID
+      description: Gets a Tag By UID
+      operationId: getTagByUID
+      parameters:
+        - in: path
+          name: tagUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Tag
+      responses:
+        "200":
+          description: OK. Tag succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      text:
+                        type: string
+                        example: "Text"
+                  message:
+                    type: string
+                    example: "Tag successfully retrieved"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain text!"
+        "409":
+          description: Conflict. Tag already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tag already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - tags
+      summary: Delete Tag By UID
+      description: Delete Tag By UID
+      operationId: deleteIngredientByUID
+      parameters:
+        - in: path
+          name: tagUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Tag
+      responses:
+        "200":
+          description: OK. Tag succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tag successfully deleted!"
+        "404":
+          description: Not Found. Tag does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tag does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /tags/{tagText}:
+    get:
+      tags:
+        - tags
+      summary: Get Tag By Text
+      description: Gets a Tag By Text
+      operationId: getTagByText
+      parameters:
+        - in: path
+          name: tagName
+          schema:
+            type: string
+          required: true
+          description: The Text of the Tag
+      responses:
+        "200":
+          description: OK. Tag succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/tags/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "Tag successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain text!"
+        "409":
+          description: Conflict. Tag already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tag already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /users:
+    post:
+      tags:
+        - users
+      summary: Add User
+      description: Adds an User
+      operationId: addUser
+      requestBody:
+        description: An User Object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username123"
+                password:
+                  type: string
+                  example: "password"
+      responses:
+        "200":
+          description: OK. User succesfully added to database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/users/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "User successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain username and password"
+        "409":
+          description: Conflict. Username already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Username already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    get:
+      tags:
+        - users
+      summary: Get User By Username and Password
+      description: Gets User Info by Username and Password
+      operationId: getUserByUsernamePassword
+      requestBody:
+        description: An User Object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username123"
+                password:
+                  type: string
+                  example: "password"
+      responses:
+        "200":
+          description: OK. User succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/users/DoARzpyNG8mx5Ke6bvnM"
+                  message:
+                    type: string
+                    example: "User successfully retrieved"
+        "404":
+          description: Not Found. User does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /users/{userUID}:
+    get:
+      tags:
+        - users
+      summary: Get User By UID
+      description: Gets User Info by UID
+      operationId: getUserByUID
+      parameters:
+        - in: path
+          name: userUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the User
+      responses:
+        "200":
+          description: OK. User succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: "username123"
+                      youTube:
+                        type: string
+                        example: "www.youtube.com/username123"
+                      instagram:
+                        type: string
+                        example: "www.instagram.com/username123"
+                      facebook:
+                        type: string
+                        example: "www.facebook.com/username123"
+                      twitter:
+                        type: string
+                        example: "www.twitter.com/username123"
+                      tikTok:
+                        type: string
+                        example: "www.tikTok.com/username123"
+                      reddit:
+                        type: string
+                        example: "www.reddit.com/username123"
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2022-03-22T12:34:52.294Z"
+                  message:
+                    type: string
+                    example: "User successfully retrieved"
+        "404":
+          description: Not Found. User does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    put:
+      tags:
+        - users
+      summary: Update User By UID
+      description: Update User Info By UID
+      operationId: updateUserByUID
+      parameters:
+        - in: path
+          name: userUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the User
+      requestBody:
+        description: New Password and Old Password. Username cannot be changed.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: "password"
+                newPassword:
+                  type: string
+                  example: "password1"
+              required:
+                - oldPassword
+      responses:
+        "200":
+          description: OK. User succesfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/users/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "User successfully updated!"
+        "400":
+          description: Bad Request. Incomplete or wrong request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body must contain old password for updating user!"
+        "404":
+          description: Not Found. User does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - users
+      summary: Delete User By UID
+      description: Delete User By UID
+      operationId: deleteUserByUID
+      parameters:
+        - in: path
+          name: userUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the User
+      requestBody:
+        description: Password for confirmation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password"
+      responses:
+        "200":
+          description: OK. User succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User successfully deleted!"
+        "400":
+          description: Bad Request. Incomplete or wrong request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body must contain password for deleting user!"
+        "404":
+          description: Not Found. User does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist"
+        "500":
           description: Internal Server Error. Some Error occured
           content:
             application/json:

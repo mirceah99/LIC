@@ -1,4 +1,4 @@
-const { micros } = require('../models/index');
+const { micros } = require("../models/index");
 
 exports.addMicro = async (micro) => {
 	return await micros.create({
@@ -21,4 +21,21 @@ exports.getMicro = async (id) => {
 		calcium: micro.calcium,
 		iron: micro.iron,
 	};
+};
+
+exports.updateMicro = async (id, newMicro) => {
+	const micro = (await micros.findByPk(id)).dataValues;
+	await micros.update(
+		{
+			sodium: newMicro.sodium || micro.sodium,
+			potassium: newMicro.potassium || micro.potassium,
+			vitaminA: newMicro.vitaminA || micro.vitaminA,
+			vitaminC: newMicro.vitaminC || micro.vitaminC,
+			calcium: newMicro.calcium || micro.calcium,
+			iron: newMicro.iron || micro.iron,
+		},
+		{
+			where: { id: id },
+		}
+	);
 };

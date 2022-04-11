@@ -1,23 +1,18 @@
 import classes from "./MyProfile.module.css";
 import profilePicture from "../../assets/demo-img/profilePicture.jpg";
 import Input from "../../components/UI/Input";
-import { useContext, useState } from "react";
-import AuthContext from "../../store/auth-context";
+import { useState } from "react";
+import Button from "../../components/UI/Button";
 const MyProfile = () => {
-	const authCtx = useContext(AuthContext);
-
-	if (!authCtx.isLoggedIn) {
-	}
-
 	const [youTube, setYouTube] = useState("");
 	const [instagram, setInstagram] = useState("");
 	const [facebook, setFacebook] = useState("");
 	const [twitter, setTwitter] = useState("");
 	const [tikTok, setTikTok] = useState("");
 	const [reddit, setReddit] = useState("");
-
+	const submitHandler = () => {};
 	return (
-		<div>
+		<form>
 			<div className={classes["picture-and-username"]}>
 				<img
 					className={classes["profile-picture"]}
@@ -29,36 +24,65 @@ const MyProfile = () => {
 			<div className={classes["updatable-info"]}>
 				<div>
 					<label>YouTube:</label>
-					<Input value={youTube} placeholder="set me" />
+					<Input
+						value={youTube}
+						onChange={(event) => setYouTube(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 				<div>
 					<label>Instagram:</label>
-					<Input value={instagram} placeholder="set me" />
+					<Input
+						value={instagram}
+						onChange={(event) => setInstagram(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 				<div>
 					<label>Facebook:</label>
-					<Input value={facebook} placeholder="set me" />
+					<Input
+						value={facebook}
+						onChange={(event) => setFacebook(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 				<div>
 					<label>Twitter:</label>
-					<Input value={twitter} placeholder="set me" />
+					<Input
+						value={twitter}
+						onChange={(event) => setTwitter(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 				<div>
 					<label>TikTok:</label>
-					<Input value={tikTok} placeholder="set me" />
+					<Input
+						value={tikTok}
+						onChange={(event) => setTikTok(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 				<div>
 					<label>Reddit:</label>
-					<Input value={reddit} placeholder="set me" />
+					<Input
+						value={reddit}
+						onChange={(event) => setReddit(event.target.value)}
+						placeholder="set me"
+					/>
 					<p>🔗</p>
 				</div>
 			</div>
-		</div>
+			<div className={classes["update-button"]}>
+				<Button onClick={submitHandler} type="submit">
+					Update
+				</Button>
+			</div>
+		</form>
 	);
 };
 export default MyProfile;
