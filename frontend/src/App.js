@@ -12,7 +12,6 @@ import AuthContext from "./store/auth-context";
 import { useContext } from "react";
 function App() {
 	const authCtx = useContext(AuthContext);
-	console.log(authCtx.isLoggedIn);
 	return (
 		<>
 			<NavBar />

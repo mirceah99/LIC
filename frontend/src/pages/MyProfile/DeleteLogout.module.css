@@ -1,0 +1,30 @@
+.delete-logout-div {
+	display: flex;
+	margin: 10px 0px;
+	justify-content: space-around !important;
+}
+.delete-form-buttons {
+	width: 90%;
+}
+
+.delete-logout-div button {
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+
+button.red-button {
+	background-color: #e49696;
+}
+
+.delete-form {
+	align-items: center;
+	flex-wrap: wrap;
+	text-align: center;
+	justify-content: center !important;
+}
+.delete-form span {
+	font-weight: bold;
+}
+.delete-form p {
+	margin-bottom: 0px;
+}

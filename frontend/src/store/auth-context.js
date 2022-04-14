@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 
 function parseJwt(token) {
+	if (!token || token === "null") return null;
 	var base64Url = token.split(".")[1];
 	var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
 	var jsonPayload = decodeURIComponent(
@@ -20,11 +21,11 @@ const AuthContext = createContext({
 	isLoggedIn: false,
 	login: (token) => {},
 	logout: () => {},
-	decodeToken: { id: 0 },
+	decodeToken: { id: 0, url: "" },
 });
 export const AuthContextProvider = (props) => {
 	const [token, setToken] = useState(localStorage.token);
-	const [decodeToken, setDecodedToken] = useState(null);
+	const [decodeToken, setDecodedToken] = useState(parseJwt(localStorage.token));
 	const isLoggedIn = !!token;
 
 	const loginHandler = (token) => {

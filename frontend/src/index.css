@@ -38,3 +38,8 @@ h3 {
 	height: 50px;
 	z-index: 1;
 }
+#success-animation {
+	left: 50%;
+	z-index: 1;
+	position: absolute;
+}

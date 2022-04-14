@@ -3,7 +3,8 @@ const crypto = require("crypto");
 const { decryptId, makeLink, CustomError } = require("../middleware/utilities");
 
 const { users } = require("../models/index");
-
+const { generateRandomString } = require("../middleware/utilities");
+const { sendValidationEmail } = require("../utilities/email.services");
 const base = "/users/";
 
 async function userExists(username) {
@@ -56,16 +57,10 @@ exports.getUserByUID = async (encryptedId) => {
 	let user = await users.findByPk(decryptedId);
 	if (!user) throw new CustomError("User does not exist", 404);
 	else user = user.dataValues;
-	return {
-		username: user.username,
-		youTube: user.youTube,
-		instagram: user.instagram,
-		facebook: user.facebook,
-		twitter: user.twitter,
-		tikTok: user.tikTok,
-		reddit: user.reddit,
-		createdAt: user.createdAt,
-	};
+	delete user.password;
+	delete user.id;
+	delete user.salt;
+	return user;
 };
 
 exports.getFullUserByUID = async (encryptedId) => {
@@ -112,6 +107,7 @@ exports.getUserByUsernameAndPasswordAllData = async (username, password) => {
 	else user = user[0].dataValues;
 	const { salt } = user;
 	checkPassword(user.password, salt, password);
+	user.url = makeLink(base, user.id.toString());
 	return user;
 };
 
@@ -119,7 +115,9 @@ exports.updateUser = async (id, user) => {
 	const oldUser = await this.getFullUserByUID(id);
 	const { salt } = oldUser;
 
-	checkPassword(oldUser.password, salt, user.oldPassword);
+	if (user.oldPassword) {
+		checkPassword(oldUser.password, salt, user.oldPassword);
+	}
 
 	let newPassword;
 	let newSalt;
@@ -151,6 +149,34 @@ exports.updateUser = async (id, user) => {
 	return makeLink(base, oldUser.id.toString());
 };
 
+exports.updateUser2 = async (encryptedId, user) => {
+	const id = decryptId(encryptedId)[0];
+	delete user.password;
+	delete user.username;
+	delete user.id;
+	delete user.salt;
+	delete user.emailConfirmed;
+	delete user.emailConfirmationCode;
+	if (user.email) {
+		const randomString = generateRandomString(100);
+		sendValidationEmail(
+			user.email,
+			`${process.env.baseUrl}/api/users/confirm-email/${randomString}`
+		);
+		user.emailConfirmationCode = randomString;
+	}
+
+	await users.update(
+		{
+			...user,
+		},
+		{
+			where: { id },
+		}
+	);
+	return makeLink(base, id);
+};
+
 exports.deleteUser = async (id, password) => {
 	const oldUser = await this.getFullUserByUID(id);
 	const { salt } = oldUser;
@@ -160,4 +186,17 @@ exports.deleteUser = async (id, password) => {
 	await users.destroy({
 		where: { id: oldUser.id },
 	});
+};
+exports.verifyEmail = async (emailConfirmationCode) => {
+	if (emailConfirmationCode.length < 10)
+		throw new CustomError("Seems suspicious, so not allowed!", 401);
+	const response = await users.update(
+		{
+			emailConfirmed: true,
+			emailConfirmationCode: null,
+		},
+		{ where: { emailConfirmationCode }, returning: true }
+	);
+	if (response[0] !== 1) return false;
+	return response[1][0].dataValues;
 };

@@ -5,7 +5,10 @@ const { CustomError } = require("../middleware/utilities");
 
 exports.login = async ({ username, password }) => {
 	const user = await getUserByUsernameAndPasswordAllData(username, password);
-	const payload = { id: user.id };
+	const payload = {
+		id: user.url.substring(user.url.lastIndexOf("/") + 1),
+		url: user.url,
+	};
 	const accessToken = createToken(payload);
 	const refreshToken = "refreshToken"; //TODO
 	return { accessToken, refreshToken };

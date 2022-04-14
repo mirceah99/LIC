@@ -1,4 +1,8 @@
 const UserService = require("../services/user.service");
+const {
+	generateSuccessEmailTemplate,
+	generateFailedConfirmEmailTemplate,
+} = require("../templates/templates");
 
 exports.addUser = async (req, res) => {
 	try {
@@ -9,7 +13,6 @@ exports.addUser = async (req, res) => {
 			});
 		}
 		if (req.body.username.search("@") !== -1) {
-			console.log("okay");
 			return res.status(400).json({
 				message: "️Username can't contain @!",
 			});
@@ -75,8 +78,36 @@ exports.updateUserPassword = async (req, res) => {
 				message: "Username cannot be changed!",
 			});
 		}
-
+		//TODO verify if person that did the request is authorized to do this
 		const userLink = await UserService.updateUser(req.params.id, req.body);
+		return res
+			.status(200)
+			.json({ data: userLink, message: "User successfully updated" });
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+
+exports.updateUser = async (req, res) => {
+	try {
+		if (!req.body) {
+			return res.status(400).json({
+				message: "Body must exist!",
+			});
+		}
+
+		if (req.body?.username || req.body?.password) {
+			return res.status(400).json({
+				message: "Can't change username or password using this route.",
+			});
+		}
+		if (req?.user?.id !== req.params.id) {
+			return res.status(403).json({
+				message: `Not allowed to change data for this user id ${req.params.id}`,
+			});
+		}
+
+		const userLink = await UserService.updateUser2(req.params.id, req.body);
 		return res
 			.status(200)
 			.json({ data: userLink, message: "User successfully updated" });
@@ -95,6 +126,25 @@ exports.deleteUser = async (req, res) => {
 
 		await UserService.deleteUser(req.params.id, req.body.password);
 		return res.status(200).json({ message: "User successfully deleted" });
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+exports.verifyEmail = async (req, res) => {
+	try {
+		const updatedUser = await UserService.verifyEmail(req.params.code);
+		if (updatedUser) {
+			return res
+				.status(200)
+				.setHeader("Content-Type", "text/html")
+				.send(
+					generateSuccessEmailTemplate(updatedUser.email, updatedUser.username)
+				);
+		} else
+			return res
+				.status(400)
+				.setHeader("Content-Type", "text/html")
+				.send(generateFailedConfirmEmailTemplate());
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
