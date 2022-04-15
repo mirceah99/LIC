@@ -14,6 +14,8 @@ router.get("/", UserController.getUserByUsernameAndPassword);
 
 router.put("/:id", verifyToken, UserController.updateUser);
 
+router.put("/profile-picture/:id", verifyToken, UserController.updateUser);
+
 router.put("/password/:id", verifyToken, UserController.updateUserPassword);
 
 router.delete("/:id", verifyToken, UserController.deleteUser);

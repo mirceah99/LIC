@@ -5,6 +5,7 @@ const { decryptId, makeLink, CustomError } = require("../middleware/utilities");
 const { users } = require("../models/index");
 const { generateRandomString } = require("../middleware/utilities");
 const { sendValidationEmail } = require("../utilities/email.services");
+const { getImageLinkById } = require("../utilities/picture.services");
 const base = "/users/";
 
 async function userExists(username) {
@@ -60,6 +61,7 @@ exports.getUserByUID = async (encryptedId) => {
 	delete user.password;
 	delete user.id;
 	delete user.salt;
+	user.profilePicture = getImageLinkById("profile", user.profilePicture);
 	return user;
 };
 
@@ -164,6 +166,7 @@ exports.updateUser2 = async (encryptedId, user) => {
 			`${process.env.baseUrl}/api/users/confirm-email/${randomString}`
 		);
 		user.emailConfirmationCode = randomString;
+		user.emailConfirmed = false;
 	}
 
 	await users.update(
@@ -199,4 +202,7 @@ exports.verifyEmail = async (emailConfirmationCode) => {
 	);
 	if (response[0] !== 1) return false;
 	return response[1][0].dataValues;
+};
+exports.updateUserProfilePicture = async (picture, userId) => {
+	return "TBD";
 };

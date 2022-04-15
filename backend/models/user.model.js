@@ -41,5 +41,9 @@ module.exports = (sequelize, DataTypes) => {
 		emailConfirmationCode: {
 			type: DataTypes.STRING,
 		},
+		profilePicture: {
+			type: DataTypes.STRING,
+			defaultValue: "default",
+		},
 	});
 };

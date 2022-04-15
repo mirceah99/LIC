@@ -7,7 +7,6 @@ const {
 exports.addUser = async (req, res) => {
 	try {
 		if (!req.body?.username || !req.body?.password) {
-			console.log("problem!");
 			return res.status(400).json({
 				message: "Body should contain username and password!",
 			});
@@ -145,6 +144,32 @@ exports.verifyEmail = async (req, res) => {
 				.status(400)
 				.setHeader("Content-Type", "text/html")
 				.send(generateFailedConfirmEmailTemplate());
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+
+exports.updateUserProfilePicture = async (req, res) => {
+	try {
+		if (!req.body) {
+			return res.status(400).json({
+				message: "Body must exist!",
+			});
+		}
+
+		if (req?.user?.id !== req.params.id) {
+			return res.status(403).json({
+				message: `Not allowed to change data for this user id ${req.params.id}`,
+			});
+		}
+
+		const pictureLink = await "TBD";
+		return res
+			.status(200)
+			.json({
+				pictureLink: pictureLink,
+				message: "User picture successfully updated",
+			});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}

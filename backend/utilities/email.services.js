@@ -50,10 +50,9 @@ async function sendValidationEmail(receiverEmail, link) {
 			      <h2>To verify your account please use this <a href="${link}">link</a>.</h2>
 				  <h4>If you can't press the link press Report not spam, or just move the email from spam, if doesn't work here is the link ( ${link} ).</h4>`;
 	const subject = "Verify your account.";
-	console.log(html);
 	const response = await sendEmail(receiverEmail, subject, text, html);
 	if (response) {
-		console.log("EMAIL SENT SUCCESSFUL ", response);
+		console.log("EMAIL SENT SUCCESSFUL ", response.envelope);
 	} else {
 		console.log("Error sending email 😔😔😔😔");
 	}

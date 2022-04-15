@@ -1,5 +1,5 @@
 import classes from "./MyProfile.module.css";
-import profilePicture from "../../assets/demo-img/profilePicture.jpg";
+import profilePicture2 from "../../assets/demo-img/profilePicture.jpg";
 import Input from "../../components/UI/Input";
 import { useContext, useEffect, useState } from "react";
 import Button from "../../components/UI/Button";
@@ -8,6 +8,8 @@ import AuthContext from "../../store/auth-context";
 import SuccessAnimation from "../../components/UI/SuccessAnimation";
 import HorizontalLine from "../../components/UI/HorizontalLine";
 import DeleteLogout from "./DeleteLogout";
+import UploadPicture from "../../components/UI/UploadPicture";
+import Modal from "../../components/UI/Modal";
 const MyProfile = () => {
 	const authCtx = useContext(AuthContext);
 	const [youTube, setYouTube] = useState("");
@@ -20,9 +22,22 @@ const MyProfile = () => {
 	const [username, setUsername] = useState("");
 	const [needToCheckEmail, setNeedToCheckEmail] = useState(false);
 	const [success, setSuccess] = useState(false);
+	const [profilePicture, setProfilePicture] = useState(profilePicture2);
+	const [uploadPicture, setUploadPicture] = useState(false);
 	const { error, isLoading, sendRequest } = useHttp();
 	const openUrl = (url) => {
 		if (url) window.open(url, "_blank").focus();
+	};
+
+	const showUploadPictureModal = () => {
+		setUploadPicture(true);
+	};
+	const hideUploadPictureModal = () => {
+		setUploadPicture(false);
+	};
+	const changeImage = (url) => {
+		setProfilePicture(url);
+		// need to send a request on database
 	};
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -77,6 +92,8 @@ const MyProfile = () => {
 		response.data.reddit && setReddit(response.data.reddit);
 		response.data.email && setEmail(response.data.email);
 		response.data.username && setUsername(response.data.username);
+		response.data.profilePicture &&
+			setProfilePicture(response.data.profilePicture);
 
 		if (response.data.email && !response.data.emailConfirmed)
 			setNeedToCheckEmail(true);
@@ -91,8 +108,18 @@ const MyProfile = () => {
 	}, []);
 	return (
 		<>
+			{uploadPicture && (
+				<Modal>
+					<UploadPicture
+						actualImageUrl={profilePicture}
+						onCancel={hideUploadPictureModal}
+						changeImage={changeImage}
+					/>
+				</Modal>
+			)}
 			<div className={classes["picture-and-username"]}>
 				<img
+					onClick={showUploadPictureModal}
 					className={classes["profile-picture"]}
 					src={profilePicture}
 					alt="you"
@@ -194,8 +221,9 @@ const MyProfile = () => {
 					<Button type="submit">Update Email</Button>
 				</div>
 			</form>
+			<HorizontalLine />
+
 			<div className={classes["updatable-info"]}>
-				<HorizontalLine />
 				<DeleteLogout username={username} />
 			</div>
 			{success && <SuccessAnimation />}

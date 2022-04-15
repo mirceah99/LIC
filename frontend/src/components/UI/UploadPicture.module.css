@@ -1,0 +1,31 @@
+.controls {
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	width: 100%;
+	transform: translateX(-50%);
+	height: 80px;
+	display: flex;
+	align-items: center;
+	background-color: white;
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+.image {
+	border-radius: var(--border-radius);
+	border: solid 1px black;
+	aspect-ratio: 1 / 1;
+	width: 40%;
+}
+.image-upload {
+	display: flex;
+	margin: 10px;
+	justify-content: space-around;
+	align-items: center;
+}
+.d-flex {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}

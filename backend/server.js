@@ -10,6 +10,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// allow access to static files eg: images
+app.use("/static", express.static("public-static"));
+
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 

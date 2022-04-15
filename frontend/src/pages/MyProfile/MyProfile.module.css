@@ -47,13 +47,3 @@
 .confirm-email span {
 	margin: 0px 10px;
 }
-.delete-logout-div {
-	display: flex;
-	margin: 10px 0px;
-	justify-content: space-around;
-}
-.delete-logout-div button {
-	background-color: #e49696 !important;
-	padding-left: 2rem;
-	padding-right: 2rem;
-}

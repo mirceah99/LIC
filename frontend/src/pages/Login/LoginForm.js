@@ -14,7 +14,6 @@ const LoginForm = () => {
 	const [loginResponse, setLoginResponse] = useState(null);
 
 	const saveTokens = (response) => {
-		console.log("saveTokens response.data", response.data);
 		authCtx.login(response.data.accessToken);
 		setLoginResponse(response);
 	};
