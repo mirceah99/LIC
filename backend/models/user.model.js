@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		profilePicture: {
 			type: DataTypes.STRING,
-			defaultValue: "default",
+			defaultValue: "default.png",
 		},
 	});
 };

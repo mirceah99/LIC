@@ -151,9 +151,9 @@ exports.verifyEmail = async (req, res) => {
 
 exports.updateUserProfilePicture = async (req, res) => {
 	try {
-		if (!req.body) {
+		if (!req.addedPicture) {
 			return res.status(400).json({
-				message: "Body must exist!",
+				message: "No picture found!",
 			});
 		}
 
@@ -162,14 +162,14 @@ exports.updateUserProfilePicture = async (req, res) => {
 				message: `Not allowed to change data for this user id ${req.params.id}`,
 			});
 		}
-
-		const pictureLink = await "TBD";
-		return res
-			.status(200)
-			.json({
-				pictureLink: pictureLink,
-				message: "User picture successfully updated",
-			});
+		const pictureLink = await UserService.updateUserProfilePicture(
+			req,
+			req.params.id
+		);
+		return res.status(200).json({
+			pictureLink: pictureLink,
+			message: "User picture successfully updated!",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}

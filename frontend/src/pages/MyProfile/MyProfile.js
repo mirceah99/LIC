@@ -1,5 +1,4 @@
 import classes from "./MyProfile.module.css";
-import profilePicture2 from "../../assets/demo-img/profilePicture.jpg";
 import Input from "../../components/UI/Input";
 import { useContext, useEffect, useState } from "react";
 import Button from "../../components/UI/Button";
@@ -22,7 +21,7 @@ const MyProfile = () => {
 	const [username, setUsername] = useState("");
 	const [needToCheckEmail, setNeedToCheckEmail] = useState(false);
 	const [success, setSuccess] = useState(false);
-	const [profilePicture, setProfilePicture] = useState(profilePicture2);
+	const [profilePicture, setProfilePicture] = useState(null);
 	const [uploadPicture, setUploadPicture] = useState(false);
 	const { error, isLoading, sendRequest } = useHttp();
 	const openUrl = (url) => {
@@ -35,9 +34,39 @@ const MyProfile = () => {
 	const hideUploadPictureModal = () => {
 		setUploadPicture(false);
 	};
+	const showSuccessAnimation = (response) => {
+		if (
+			response.message.includes("success") ||
+			response.message.includes("Success")
+		) {
+			setSuccess(true);
+			setTimeout(() => {
+				setSuccess(false);
+			}, 2000);
+		}
+	};
+	//update profile picture request
+	const changeProfilePicture = async (picture) => {
+		let blobImage = await fetch(picture);
+		blobImage = await blobImage.blob();
+		const formData = new FormData();
+		formData.append("profilePicture", blobImage);
+		const requestConfig = {
+			path: `/users/profile-picture/${authCtx.decodeToken.id}`,
+			method: "PUT",
+			headers: {
+				"Content-Type": "multipart/form-data;",
+			},
+			body: formData,
+		};
+		sendRequest(requestConfig, (response) => {
+			showSuccessAnimation(response);
+		});
+	};
 	const changeImage = (url) => {
 		setProfilePicture(url);
 		// need to send a request on database
+		changeProfilePicture(url);
 	};
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -72,15 +101,7 @@ const MyProfile = () => {
 	};
 
 	const handlerUpdateResponse = (response) => {
-		if (
-			response.message.includes("success") ||
-			response.message.includes("Success")
-		) {
-			setSuccess(true);
-			setTimeout(() => {
-				setSuccess(false);
-			}, 2000);
-		}
+		showSuccessAnimation(response);
 	};
 	const consumeResponseFromApi = (response) => {
 		console.log(response);

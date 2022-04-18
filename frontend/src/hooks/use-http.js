@@ -19,17 +19,25 @@ const useHttp = () => {
 			setIsLoading(true);
 			setError(null);
 			try {
+				const headers = {
+					"Content-Type": "application/json",
+					AuthorizationToken: authCtx.token,
+					...requestConfig.headers,
+				};
+				let body;
+				if (headers["Content-Type"] === "multipart/form-data;") {
+					body = requestConfig.body;
+					delete headers["Content-Type"];
+				} else {
+					body = JSON.stringify(requestConfig.body);
+				}
 				const url = requestConfig.path.includes(baseUrl)
 					? requestConfig.path
 					: `${baseUrl}${requestConfig.path}`;
 				const response = await fetch(url, {
 					method: requestConfig.method,
-					headers: {
-						"Content-Type": "application/json",
-						AuthorizationToken: authCtx.token,
-						...requestConfig.headers,
-					},
-					body: JSON.stringify(requestConfig.body),
+					headers,
+					body,
 				});
 
 				if (!response.ok) {

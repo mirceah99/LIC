@@ -159,6 +159,7 @@ exports.updateUser2 = async (encryptedId, user) => {
 	delete user.salt;
 	delete user.emailConfirmed;
 	delete user.emailConfirmationCode;
+	delete user.profilePicture;
 	if (user.email) {
 		const randomString = generateRandomString(100);
 		sendValidationEmail(
@@ -203,6 +204,18 @@ exports.verifyEmail = async (emailConfirmationCode) => {
 	if (response[0] !== 1) return false;
 	return response[1][0].dataValues;
 };
-exports.updateUserProfilePicture = async (picture, userId) => {
-	return "TBD";
+exports.updateUserProfilePicture = async (req, userId) => {
+	const id = decryptId(userId)[0];
+	const pictureLink = getImageLinkById("profile", req.addedPicture);
+	await users.update(
+		{
+			profilePicture: req.addedPicture,
+		},
+		{
+			where: {
+				id,
+			},
+		}
+	);
+	return pictureLink;
 };

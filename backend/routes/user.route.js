@@ -6,6 +6,10 @@ const UserController = require("../controllers/user.controller");
 
 const { verifyToken } = require("../middleware/utilities");
 
+const {
+	uploadProfilePictureMiddleware,
+} = require("../utilities/picture.services");
+
 router.post("/", UserController.addUser);
 
 router.get("/:id", UserController.getUserByUID);
@@ -14,7 +18,12 @@ router.get("/", UserController.getUserByUsernameAndPassword);
 
 router.put("/:id", verifyToken, UserController.updateUser);
 
-router.put("/profile-picture/:id", verifyToken, UserController.updateUser);
+router.put(
+	"/profile-picture/:id",
+	verifyToken,
+	uploadProfilePictureMiddleware,
+	UserController.updateUserProfilePicture
+);
 
 router.put("/password/:id", verifyToken, UserController.updateUserPassword);
 
