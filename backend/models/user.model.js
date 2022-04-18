@@ -45,5 +45,9 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			defaultValue: "default.png",
 		},
+		resetPasswordToken: {
+			type: DataTypes.STRING,
+			defaultValue: null,
+		},
 	});
 };

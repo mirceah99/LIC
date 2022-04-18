@@ -16,6 +16,10 @@ router.get("/:id", UserController.getUserByUID);
 
 router.get("/", UserController.getUserByUsernameAndPassword);
 
+router.put("/reset-password", UserController.resetPassword);
+
+router.put("/change-password", UserController.changePassword);
+
 router.put("/:id", verifyToken, UserController.updateUser);
 
 router.put(

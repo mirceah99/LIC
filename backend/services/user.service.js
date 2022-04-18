@@ -1,10 +1,18 @@
 const crypto = require("crypto");
 
-const { decryptId, makeLink, CustomError } = require("../middleware/utilities");
+const {
+	decryptId,
+	encryptId,
+	makeLink,
+	CustomError,
+} = require("../middleware/utilities");
 
 const { users } = require("../models/index");
 const { generateRandomString } = require("../middleware/utilities");
-const { sendValidationEmail } = require("../utilities/email.services");
+const {
+	sendValidationEmail,
+	sendResetPasswordEmail,
+} = require("../utilities/email.services");
 const { getImageLinkById } = require("../utilities/picture.services");
 const base = "/users/";
 
@@ -143,6 +151,8 @@ exports.updateUser = async (id, user) => {
 			tikTok: user.tikTok || oldUser.tikTok,
 			reddit: user.reddit || oldUser.reddit,
 			salt: user?.newPassword ? newSalt : oldUser.salt,
+			resetPasswordToken:
+				user?.resetPasswordToken || oldUser.resetPasswordToken,
 		},
 		{
 			where: { id: oldUser.id },
@@ -218,4 +228,49 @@ exports.updateUserProfilePicture = async (req, userId) => {
 		}
 	);
 	return pictureLink;
+};
+
+exports.resetPassword = async (email) => {
+	const token = generateRandomString(200);
+
+	const response = await users.update(
+		{
+			resetPasswordToken: token,
+		},
+		{
+			where: {
+				email,
+				emailConfirmed: 1,
+			},
+		}
+	);
+	if (response[0]) {
+		sendResetPasswordEmail(
+			email,
+			`${process.env.fontEndBaseUrl}/change-password/${token}`
+		);
+	}
+	return true;
+};
+exports.changePassword = async (password, token) => {
+	const user = { newPassword: password };
+	const response = await users.update(
+		{
+			resetPasswordToken: null,
+		},
+		{
+			where: {
+				resetPasswordToken: token,
+			},
+			returning: true,
+		}
+	);
+	if (response[0] === 0)
+		throw new CustomError("This token is incorrect or already used!", 403);
+
+	const { id, username } = response[1][0].dataValues;
+
+	await this.updateUser(encryptId(id), user);
+
+	return { success: true, username };
 };

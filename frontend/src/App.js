@@ -10,6 +10,8 @@ import MealDetails from "./components/MealDetails";
 import MyProfile from "./pages/MyProfile/MyProfile";
 import AuthContext from "./store/auth-context";
 import { useContext } from "react";
+import ChangePasswordForm from "./pages/ChangePassword/ChangePasswordForm";
+import ResetPasswordForm from "./pages/ResetPassword/ResetPasswordForm";
 function App() {
 	const authCtx = useContext(AuthContext);
 	return (
@@ -19,6 +21,13 @@ function App() {
 				{!authCtx.isLoggedIn && <Route path="/login" element={<LoginForm />} />}
 
 				<Route path="/register" element={<RegisterForm />} />
+				<Route path="/reset-password" element={<ResetPasswordForm />} />
+
+				<Route
+					path="/change-password/:token"
+					element={<ChangePasswordForm />}
+				/>
+
 				<Route path="/" element={"maine page TBD"} />
 				<Route path="/meal" element={<Meal />} />
 				<Route path="/meal-details" element={<MealDetails />} />

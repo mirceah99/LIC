@@ -174,3 +174,51 @@ exports.updateUserProfilePicture = async (req, res) => {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
+
+exports.resetPassword = async (req, res) => {
+	try {
+		if (!req?.body?.email) {
+			return res.status(400).json({
+				message: "You need to provide an email in body!",
+			});
+		}
+		const pictureLink = await UserService.resetPassword(req.body.email);
+		return res.status(200).json({
+			pictureLink: pictureLink,
+			message:
+				"If your email exist and you verified it you will receive a reset password email!",
+		});
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+
+exports.changePassword = async (req, res) => {
+	try {
+		if (!req?.body?.token) {
+			return res.status(400).json({
+				message: "You need to provide a token in body!",
+			});
+		}
+		if (!req?.body?.password) {
+			return res.status(400).json({
+				message: "You need to provide a password in body!",
+			});
+		}
+		if (req.body.password.length < 10) {
+			return res.status(400).json({
+				message: "You need to provide a password with more than 10 characters!",
+			});
+		}
+		const response = await UserService.changePassword(
+			req.body.password,
+			req.body.token
+		);
+		return res.status(200).json({
+			username: response.username,
+			message: `Successful updated password for user: ${response.username}`,
+		});
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
