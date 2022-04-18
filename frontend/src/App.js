@@ -12,35 +12,49 @@ import AuthContext from "./store/auth-context";
 import { useContext } from "react";
 import ChangePasswordForm from "./pages/ChangePassword/ChangePasswordForm";
 import ResetPasswordForm from "./pages/ResetPassword/ResetPasswordForm";
+import Filter from "./components/UI/Filter";
+import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 function App() {
 	const authCtx = useContext(AuthContext);
+
+	const theme = createTheme({
+		palette: {
+			primary: {
+				main: "#03d099",
+			},
+		},
+	});
 	return (
 		<>
-			<NavBar />
-			<Routes>
-				{!authCtx.isLoggedIn && <Route path="/login" element={<LoginForm />} />}
+			<MuiThemeProvider theme={theme}>
+				<NavBar />
+				<Routes>
+					{!authCtx.isLoggedIn && (
+						<Route path="/login" element={<LoginForm />} />
+					)}
+					<Route path="/test" element={<Filter />} />
+					<Route path="/register" element={<RegisterForm />} />
+					<Route path="/reset-password" element={<ResetPasswordForm />} />
 
-				<Route path="/register" element={<RegisterForm />} />
-				<Route path="/reset-password" element={<ResetPasswordForm />} />
+					<Route
+						path="/change-password/:token"
+						element={<ChangePasswordForm />}
+					/>
 
-				<Route
-					path="/change-password/:token"
-					element={<ChangePasswordForm />}
-				/>
+					<Route path="/" element={"maine page TBD"} />
+					<Route path="/meal" element={<Meal />} />
+					<Route path="/meal-details" element={<MealDetails />} />
+					{authCtx.isLoggedIn && (
+						<Route path="/my-profile" element={<MyProfile />} />
+					)}
 
-				<Route path="/" element={"maine page TBD"} />
-				<Route path="/meal" element={<Meal />} />
-				<Route path="/meal-details" element={<MealDetails />} />
-				{authCtx.isLoggedIn && (
-					<Route path="/my-profile" element={<MyProfile />} />
-				)}
-
-				{authCtx.isLoggedIn ? (
-					<Route path="*" element={<Navigate to="/" />} />
-				) : (
-					<Route path="*" element={<Navigate to="/login" />} />
-				)}
-			</Routes>
+					{authCtx.isLoggedIn ? (
+						<Route path="*" element={<Navigate to="/" />} />
+					) : (
+						<Route path="*" element={<Navigate to="/login" />} />
+					)}
+				</Routes>
+			</MuiThemeProvider>
 		</>
 	);
 }
