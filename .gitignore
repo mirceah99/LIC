@@ -1,16 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/*/node_modules
-node_modules/
-/backend/public-static/images/profile
-.env
-/.env
-**/.env
-backend/.env
-/.pnp
-.pnp.js
+/backend/node_modules
+/frontend/node_modules
+/frontend/.eslintcache
+/frontend/.pnp
+/frontend/.pnp.js
+/frontend/package-lock.json
+/backend/package-lock.json
 
 # testing
 /coverage
@@ -24,7 +21,8 @@ backend/.env
 .env.development.local
 .env.test.local
 .env.production.local
-
+.env
+.idea
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
