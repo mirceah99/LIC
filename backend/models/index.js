@@ -80,7 +80,12 @@ db.users.hasMany(db.images, {
 });
 
 db.users.hasMany(db.collections, {
+	as: "collections"
+});
+
+db.collections.belongsTo(db.users, {
 	foreignKey: "userId",
+	as: "user",
 });
 
 module.exports = db;

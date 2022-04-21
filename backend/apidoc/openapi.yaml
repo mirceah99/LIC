@@ -10,10 +10,14 @@ tags:
     description: Handles Author operations
   - name: ingredients
     description: Handles Ingredient operations
+  - name: ingredient-units
+    description: Handles Ingredient Unit operations
   - name: tags
     description: Handles Tag operations
   - name: users
     description: Handles User operations
+  - name: ustensils
+    description: Handles Ustensils operations
 paths:
   /authors:
     post:
@@ -368,241 +372,6 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error"
-  /ingredients/{ingredientUID}/unit:
-    post:
-      tags:
-        - ingredients
-      summary: Add Ingredient Unit To Ingredient
-      description: Adds Ingredient Unit to Ingredient
-      operationId: addIngredientUnitToIngredient
-      parameters:
-        - in: path
-          name: ingredientUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the Ingredient
-      requestBody:
-        description: An Author Object
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                unitOfMeasurement:
-                  type: string
-                  example: John
-                miligrams:
-                  type: string
-                  format: uri
-                  example: "www.example.com/john"
-              required:
-                - unitOfMeasurement
-                - miligrams
-      responses:
-        "200":
-          description: OK. Ingredient Unit succesfully added to database
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: string
-                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkQlZgnjOaKv/cup"
-                  message:
-                    type: string
-                    example: "Ingredient Unit successfully added to database"
-        "400":
-          description: Bad Request. Incomplete Request Body
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Body should contain unit of measurement and miligrams!"
-        "409":
-          description: Conflict. Ingredient Unit already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Ingredient Unit already exists"
-        "500":
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
-  /ingredients/{ingredientUID}/unit/{unit}:
-    get:
-      tags:
-        - ingredients
-      summary: Get Ingredient Unit of Ingredient
-      description: Get Ingredient Unit of Ingredient
-      operationId: getIngredientUnitOfIngredient
-      parameters:
-        - in: path
-          name: ingredientUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the Ingredient
-        - in: path
-          name: unit
-          schema:
-            type: string
-          required: true
-          description: The Name of the Unit
-      responses:
-        "200":
-          description: OK. Ingredient Unit retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      miligrams:
-                        type: integer
-                        example: 100
-                  message:
-                    type: string
-                    example: "Ingredient Unit successfully retrieved"
-        "404":
-          description: Not Found. Ingredient Unit does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Ingredient Unit does not exist"
-        "500":
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
-    put:
-      tags:
-        - ingredients
-      summary: Update Ingredient Unit By UID
-      description: Updates Ingredient Unit by UID
-      operationId: updateIngredientUnitByUID
-      parameters:
-        - in: path
-          name: ingredientUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the Ingredient
-        - in: path
-          name: unit
-          schema:
-            type: string
-          required: true
-          description: The Name of the Unit
-      responses:
-        "200":
-          description: OK. Ingredient Unit updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: string
-                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkl5gnjOaKvw/unit/cup"
-                  message:
-                    type: string
-                    example: "Ingredient Unit successfully updated"
-        "404":
-          description: Not Found. Ingredient Unit does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Ingredient Unit does not exist"
-        "500":
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
-    delete:
-      tags:
-        - ingredients
-      summary: Delete Ingredient Unit By UID
-      description: Delete Ingredient Unit By UID
-      operationId: deleteIngredientUnitByUID
-      parameters:
-        - in: path
-          name: ingredientUID
-          schema:
-            type: string
-          required: true
-          description: The UID of the Ingredient
-        - in: path
-          name: unit
-          schema:
-            type: string
-          required: true
-          description: The Name of the Unit
-      responses:
-        "200":
-          description: OK. Ingredient Unit deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Ingredient Unit successfully deleted"
-        "404":
-          description: Not Found. Ingredient Unit does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Ingredient Unit does not exist"
-        "500":
-          description: Internal Server Error. Some Error occured
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal Server Error"
   /ingredients/{ingredientName}:
     get:
       tags:
@@ -929,6 +698,241 @@ paths:
                   message:
                     type: string
                     example: "Ingredient does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientUID}/unit:
+    post:
+      tags:
+        - ingredient-units
+      summary: Add Ingredient Unit To Ingredient
+      description: Adds Ingredient Unit to Ingredient
+      operationId: addIngredientUnitToIngredient
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+      requestBody:
+        description: An Author Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unitOfMeasurement:
+                  type: string
+                  example: John
+                miligrams:
+                  type: string
+                  format: uri
+                  example: "www.example.com/john"
+              required:
+                - unitOfMeasurement
+                - miligrams
+      responses:
+        "200":
+          description: OK. Ingredient Unit succesfully added to database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkQlZgnjOaKv/cup"
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain unit of measurement and miligrams!"
+        "409":
+          description: Conflict. Ingredient Unit already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ingredients/{ingredientUID}/unit/{unit}:
+    get:
+      tags:
+        - ingredient-units
+      summary: Get Ingredient Unit of Ingredient
+      description: Get Ingredient Unit of Ingredient
+      operationId: getIngredientUnitOfIngredient
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      miligrams:
+                        type: integer
+                        example: 100
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully retrieved"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    put:
+      tags:
+        - ingredient-units
+      summary: Update Ingredient Unit By UID
+      description: Updates Ingredient Unit by UID
+      operationId: updateIngredientUnitByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ingredients/3PXW8J1QGkl5gnjOaKvw/unit/cup"
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully updated"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - ingredient-units
+      summary: Delete Ingredient Unit By UID
+      description: Delete Ingredient Unit By UID
+      operationId: deleteIngredientUnitByUID
+      parameters:
+        - in: path
+          name: ingredientUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ingredient
+        - in: path
+          name: unit
+          schema:
+            type: string
+          required: true
+          description: The Name of the Unit
+      responses:
+        "200":
+          description: OK. Ingredient Unit deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit successfully deleted"
+        "404":
+          description: Not Found. Ingredient Unit does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient Unit does not exist"
         "500":
           description: Internal Server Error. Some Error occured
           content:
@@ -1483,6 +1487,213 @@ paths:
                   message:
                     type: string
                     example: "User does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ustensils:
+    post:
+      tags:
+        - ustensils
+      summary: Add Ustensil
+      description: Adds an ustensil
+      operationId: addUstensil
+      requestBody:
+        description: An Ustensil Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Oven"
+      responses:
+        "200":
+          description: OK. Ustensil succesfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/ustensils/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "Ustensil successfully updated!"
+        "400":
+          description: Bad Request. Incomplete or wrong request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain name!"
+        "409":
+          description: Conflict. Ustensil already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ustensil already exists"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ustensils/{ustensilUID}:
+    get:
+      tags:
+        - ustensils
+      summary: Get Ustensil By UID
+      description: Gets a Ustensil By UID
+      operationId: getUstensilByUID
+      parameters:
+        - in: path
+          name: ustensilUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ustensil
+      responses:
+        "200":
+          description: OK. Ustensil succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Oven"
+                  message:
+                    type: string
+                    example: "Ustensil successfully retrieved"
+        "404":
+          description: Not Found. Ustensil does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ustensil does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - ustensils
+      summary: Delete Ustensil By UID
+      description: Delete Ustensil By UID
+      operationId: deleteUstensilByUID
+      parameters:
+        - in: path
+          name: ustensilUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Ustensil
+      responses:
+        "200":
+          description: OK. Ustensil succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ustensil successfully deleted!"
+        "404":
+          description: Not Found. Ustensil does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ustensil does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /ustensils/{ustensilName}:
+    get:
+      tags:
+        - ustensils
+      summary: Get Ustensil By Name
+      description: Gets a Ustensil By Name
+      operationId: getUstensilByName
+      parameters:
+        - in: path
+          name: ustensilName
+          schema:
+            type: string
+          required: true
+          description: The Name of the Ustensil
+      responses:
+        "200":
+          description: OK. Ustensil succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Oven"
+                  message:
+                    type: string
+                    example: "Ustensil successfully retrieved"
+        "404":
+          description: Not Found. Ustensil does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ustensil does not exist"
         "500":
           description: Internal Server Error. Some Error occured
           content:
