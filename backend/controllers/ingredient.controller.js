@@ -34,7 +34,7 @@ exports.addIngredient = async (req, res) => {
 
 exports.addIngredientUnit = async (req, res) => {
 	if (!req.body.unitOfMeasurement || !req.body.miligrams) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain unit of measurement and miligrams!",
 		});
 	}
@@ -55,7 +55,7 @@ exports.addIngredientUnit = async (req, res) => {
 
 exports.addIngredientUnit = async (req, res) => {
 	if (!req.body.unitOfMeasurement || !req.body.miligrams) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain unit of measurement and miligrams!",
 		});
 	}

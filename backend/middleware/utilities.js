@@ -40,7 +40,7 @@ function verifyToken(req, res, next) {
 		req.user = decryptToke(req.header("AuthorizationToken"));
 		return next();
 	} catch (error) {
-		res.status(401).json({ message: "Unauthorized!" });
+		return res.status(401).json({ message: "Unauthorized!" });
 	}
 }
 function generateRandomString(length = 100) {

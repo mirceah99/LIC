@@ -2,7 +2,7 @@ const TagService = require("../services/tag.service");
 
 exports.addTag = async (req, res) => {
 	if (!req.body?.text) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain text!",
 		});
 	}

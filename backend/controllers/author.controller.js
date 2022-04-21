@@ -2,7 +2,7 @@ const AuthorService = require("../services/author.service");
 
 exports.addAuthor = async (req, res) => {
 	if (!req.body?.name) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain name!",
 		});
 	}

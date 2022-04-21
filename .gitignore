@@ -11,7 +11,7 @@
 
 #images 
 /backend/public-static/images/profile
-/backend/public-static/images
+/backend/public-static/images  
 
 # testing
 /coverage

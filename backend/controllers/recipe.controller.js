@@ -2,25 +2,23 @@ const RecipeService = require("../services/recipe.service");
 
 exports.addRecipe = async (req, res) => {
 	if (!req.body?.name || !req.body?.description) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should firstly contain name and description!",
 		});
 	}
 
 	if (!req.body?.prepTime || !req.body?.cookingTime || !req.body?.servingSize) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain prep time, cooking time and serving size!",
 		});
 	}
 
 	try {
 		const recipeLink = await RecipeService.addRecipe(req.body);
-		return res
-			.status(200)
-			.json({
-				data: recipeLink,
-				message: "Recipe successfully added to database",
-			});
+		return res.status(200).json({
+			data: recipeLink,
+			message: "Recipe successfully added to database",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -39,7 +37,7 @@ exports.getRecipeById = async (req, res) => {
 
 exports.addImageToRecipe = async (req, res) => {
 	if (!req.body?.content) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain content!",
 		});
 	}
@@ -59,7 +57,7 @@ exports.addImageToRecipe = async (req, res) => {
 
 exports.linkTagToRecipe = async (req, res) => {
 	if (!req.body?.id) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain id!",
 		});
 	}
@@ -69,12 +67,10 @@ exports.linkTagToRecipe = async (req, res) => {
 			req.body.id,
 			req.params.id
 		);
-		return res
-			.status(200)
-			.json({
-				data: tagsForRecipeLink,
-				message: "Tag successfully linked to recipe",
-			});
+		return res.status(200).json({
+			data: tagsForRecipeLink,
+			message: "Tag successfully linked to recipe",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -82,7 +78,7 @@ exports.linkTagToRecipe = async (req, res) => {
 
 exports.addInstructionToRecipe = async (req, res) => {
 	if (!req.body?.description || !req.body?.step) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain description and step!",
 		});
 	}
@@ -103,13 +99,13 @@ exports.addInstructionToRecipe = async (req, res) => {
 
 exports.linkIngredientToRecipe = async (req, res) => {
 	if (!req.body?.id) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain ingredient id!",
 		});
 	}
 
 	if (!req.body?.quantity) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should quantity!",
 		});
 	}
@@ -134,7 +130,7 @@ exports.linkIngredientToRecipe = async (req, res) => {
 
 exports.linkUstensilToRecipe = async (req, res) => {
 	if (!req.body?.id) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain ustensil id!",
 		});
 	}
