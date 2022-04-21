@@ -5,6 +5,7 @@ const useHttp = () => {
 	const authCtx = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(false);
+	const [status, setStatus] = useState(0);
 
 	const sendRequest = useCallback(
 		async (
@@ -14,10 +15,12 @@ const useHttp = () => {
 				headers: {},
 				body: {},
 			},
-			applyDataFunction
+			applyDataFunction,
+			inCaseOfError = () => {}
 		) => {
 			setIsLoading(true);
 			setError(null);
+			let response;
 			try {
 				const headers = {
 					"Content-Type": "application/json",
@@ -34,20 +37,26 @@ const useHttp = () => {
 				const url = requestConfig.path.includes(baseUrl)
 					? requestConfig.path
 					: `${baseUrl}${requestConfig.path}`;
-				const response = await fetch(url, {
+				response = await fetch(url, {
 					method: requestConfig.method,
 					headers,
 					body,
 				});
 
 				if (!response.ok) {
-					throw new Error((await response.json()).message || "Request failed!");
+					throw new Error(
+						(await response.json())?.message || "Request failed!"
+					);
 				}
 
 				const data = await response.json();
+				data.status = response.status;
+				setStatus(response.status);
 				applyDataFunction(data);
 			} catch (err) {
 				console.log(err);
+				setStatus(response.status);
+				inCaseOfError(response);
 				setError(err || "Something failed, idk what bananas happens!🍌🍌");
 			} finally {
 				setIsLoading(false);
@@ -56,6 +65,6 @@ const useHttp = () => {
 		[]
 	);
 
-	return { error, isLoading, sendRequest, setError };
+	return { error, isLoading, sendRequest, setError, status };
 };
 export default useHttp;

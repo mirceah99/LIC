@@ -9,6 +9,11 @@ import Slider from "@mui/material/Slider";
 import { useState } from "react";
 import Button from "./Button";
 import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Input from "./Input";
 
 const Filter = (props) => {
 	const range = { min: 0, max: 120 };
@@ -24,6 +29,8 @@ const Filter = (props) => {
 	const [vitaminC, setVitaminC] = useState([0, 60]);
 	const [calcium, setCalcium] = useState([0, 60]);
 	const [iron, setIron] = useState([0, 60]);
+	const [orderBy, setOrderBy] = useState("");
+	const [keyWords, setKeyWords] = useState("");
 	const clearAllHandler = () => {
 		setProtein([range.min, range.max]);
 		setFat([range.min, range.max]);
@@ -37,6 +44,8 @@ const Filter = (props) => {
 		setVitaminC([0, 60]);
 		setCalcium([0, 60]);
 		setIron([0, 60]);
+		setOrderBy("");
+		setKeyWords("");
 	};
 
 	const sx = {
@@ -53,6 +62,16 @@ const Filter = (props) => {
 	return (
 		<Card>
 			<div className={classes["container-div"]}>
+				<div className={classes.input}>
+					<Input
+						style={{ flexGrow: 1.1 }}
+						value={keyWords}
+						onChange={(event) => {
+							setKeyWords(event.target.value);
+						}}
+						placeholder="key words"
+					></Input>
+				</div>
 				<Accordion>
 					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
@@ -282,6 +301,25 @@ const Filter = (props) => {
 						</div>
 					</AccordionDetails>
 				</Accordion>
+				<div style={{ height: "10px" }}></div>
+				<FormControl fullWidth>
+					<InputLabel id="demo-simple-select-label">Order by </InputLabel>
+					<Select
+						labelId="demo-simple-select-label"
+						id="demo-simple-select"
+						value={orderBy}
+						label="Order by"
+						onChange={(event) => {
+							setOrderBy(event.target.value);
+						}}
+					>
+						<MenuItem value={"Price"}>Price</MenuItem>
+						<MenuItem value={"Date"}>Date</MenuItem>
+						<MenuItem value={"Rating"}>Rating</MenuItem>
+						<MenuItem value={"Calories"}>Calories</MenuItem>
+						<MenuItem value={"Protein"}>Protein</MenuItem>
+					</Select>
+				</FormControl>
 				<div className={classes["buttons-container"]}>
 					<Button onClick={clearAllHandler}>Clear All</Button>
 					<Button>Apply </Button>

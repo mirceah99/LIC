@@ -4,7 +4,15 @@ const router = express.Router();
 
 const IngredientController = require("../controllers/ingredient.controller");
 
-router.post("/", IngredientController.addIngredient);
+const {
+	uploadIngredientPictureMiddleware,
+} = require("../utilities/picture.services");
+
+router.post(
+	"/",
+	uploadIngredientPictureMiddleware,
+	IngredientController.addIngredient
+);
 
 router.post("/:id/unit", IngredientController.addIngredientUnit);
 

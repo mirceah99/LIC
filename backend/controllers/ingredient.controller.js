@@ -1,24 +1,28 @@
 const IngredientService = require("../services/ingredient.service");
 
 exports.addIngredient = async (req, res) => {
+	if (req.addedPicture) req.body = JSON.parse(req.body.data);
 	if (!req.body?.name || !req.body?.macros) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Body should contain name and macros!",
 		});
 	}
 
 	if (
-		!req.body.macros.protein ||
-		!req.body.macros.carbs ||
-		!req.body.macros.fat
+		req.body.macros.protein === undefined ||
+		req.body.macros.carbs === undefined ||
+		req.body.macros.fat === undefined
 	) {
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Macros should contain protein, carbs and fat!",
 		});
 	}
 
 	try {
-		const ingredientLink = await IngredientService.addIngredient(req.body);
+		const ingredientLink = await IngredientService.addIngredient(
+			req.body,
+			req.addedPicture
+		);
 		return res.status(200).json({
 			data: ingredientLink,
 			message: "Ingredient successfully added to database",
@@ -63,7 +67,7 @@ exports.addIngredientUnit = async (req, res) => {
 		);
 		return res.status(200).json({
 			data: ingredientUnitLink,
-			message: "Ingredient Unit succesfully added to database",
+			message: "Ingredient Unit successfully added to database",
 		});
 	} catch (e) {
 		return res.status(400).json({ message: e.message });
@@ -88,12 +92,10 @@ exports.getIngredientByName = async (req, res) => {
 		const ingredientLink = await IngredientService.getIngredientByName(
 			req.body.name
 		);
-		return res
-			.status(200)
-			.json({
-				data: ingredientLink,
-				message: "Ingredient successfully retrieved",
-			});
+		return res.status(200).json({
+			data: ingredientLink,
+			message: "Ingredient successfully retrieved",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -105,12 +107,10 @@ exports.getIngredientUnitByUID = async (req, res) => {
 			req.params.id,
 			req.params.unit
 		);
-		return res
-			.status(200)
-			.json({
-				data: ingredient,
-				message: "Ingredient Unit successfully retrieved",
-			});
+		return res.status(200).json({
+			data: ingredient,
+			message: "Ingredient Unit successfully retrieved",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -122,12 +122,10 @@ exports.updateIngredientByUID = async (req, res) => {
 			req.params.id,
 			req.body
 		);
-		return res
-			.status(200)
-			.json({
-				data: ingredientLink,
-				message: "Ingredient successfully updated",
-			});
+		return res.status(200).json({
+			data: ingredientLink,
+			message: "Ingredient successfully updated",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -140,12 +138,10 @@ exports.updateIngredientUnitByUID = async (req, res) => {
 			req.params.unit,
 			req.body
 		);
-		return res
-			.status(200)
-			.json({
-				data: ingredientLink,
-				message: "Ingredient Unit successfully updated",
-			});
+		return res.status(200).json({
+			data: ingredientLink,
+			message: "Ingredient Unit successfully updated",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}

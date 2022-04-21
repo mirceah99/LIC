@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				unique: true,
 			},
+			image: {
+				type: DataTypes.STRING,
+				defaultValue: "default.png",
+			},
 		},
 		{ timestamps: false }
 	);

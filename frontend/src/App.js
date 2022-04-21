@@ -14,6 +14,9 @@ import ChangePasswordForm from "./pages/ChangePassword/ChangePasswordForm";
 import ResetPasswordForm from "./pages/ResetPassword/ResetPasswordForm";
 import Filter from "./components/UI/Filter";
 import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
+import ChoseCreationType from "./components/ChoseCreationType";
+import CreateIngredient from "./components/CreateIngredient";
+
 function App() {
 	const authCtx = useContext(AuthContext);
 
@@ -32,7 +35,11 @@ function App() {
 					{!authCtx.isLoggedIn && (
 						<Route path="/login" element={<LoginForm />} />
 					)}
-					<Route path="/test" element={<Filter />} />
+					<Route path="/search-settings" element={<Filter />} />
+
+					<Route path="/create" element={<ChoseCreationType />} />
+					<Route path="/create/ingredient" element={<CreateIngredient />} />
+
 					<Route path="/register" element={<RegisterForm />} />
 					<Route path="/reset-password" element={<ResetPasswordForm />} />
 

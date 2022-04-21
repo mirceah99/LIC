@@ -28,3 +28,8 @@
 .display-info span {
 	padding: 0px;
 }
+.input {
+	margin: 5px;
+	display: flex;
+	justify-content: center;
+}

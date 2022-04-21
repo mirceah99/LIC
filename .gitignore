@@ -9,6 +9,9 @@
 /frontend/package-lock.json
 /backend/package-lock.json
 
+#images 
+/backend/public-static/images/profile
+
 # testing
 /coverage
 

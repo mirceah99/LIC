@@ -1,6 +1,7 @@
 .modal {
 	z-index: 2;
 	margin: 10px;
+	flex-grow: 1;
 }
 .background {
 	z-index: 2;

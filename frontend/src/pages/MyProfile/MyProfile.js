@@ -104,7 +104,6 @@ const MyProfile = () => {
 		showSuccessAnimation(response);
 	};
 	const consumeResponseFromApi = (response) => {
-		console.log(response);
 		response.data.youTube && setYouTube(response.data.youTube);
 		response.data.facebook && setFacebook(response.data.facebook);
 		response.data.instagram && setInstagram(response.data.instagram);

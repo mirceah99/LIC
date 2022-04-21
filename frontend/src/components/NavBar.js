@@ -14,10 +14,22 @@ const NavBar = () => {
 	const authCtx = useContext(AuthContext);
 	const NavBarJsx = (
 		<div className={classes["nav-bar"]}>
-			<img src={SearchSvg} alt="search" />
+			<img
+				src={SearchSvg}
+				onClick={() => {
+					navigation("/search-settings");
+				}}
+				alt="search"
+			/>
 			<img src={TrophySvg} alt="best recipes" />
 			<img src={FavoritesSvg} alt="favorites" />
-			<img src={PlusSvg} alt="create post" />
+			<img
+				src={PlusSvg}
+				onClick={() => {
+					navigation("/create");
+				}}
+				alt="create post"
+			/>
 			{authCtx.isLoggedIn && (
 				<img
 					src={UserSvg}

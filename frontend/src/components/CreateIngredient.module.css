@@ -1,0 +1,31 @@
+.title {
+	margin: 0 0 0 10px;
+}
+.input-container {
+	margin: 5px;
+}
+.input-container input {
+	margin: 5px 5px 5px 0px;
+}
+.input-container p {
+	display: contents;
+}
+.input-container .error {
+	display: block;
+	color: red;
+	margin: 0px;
+}
+.meal-picture {
+	width: 80%;
+	margin: auto;
+	margin-bottom: 10px;
+}
+.picture-zone {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+.center {
+	display: flex;
+	justify-content: center;
+}

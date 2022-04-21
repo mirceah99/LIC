@@ -58,11 +58,13 @@ const UploadPicture = (props) => {
 	return (
 		<Card>
 			<div className={classes["image-upload"]}>
-				<img
-					className={classes.image}
-					src={previewPicture || props.actualImageUrl}
-					alt="your profile"
-				></img>
+				{(previewPicture || props.actualImageUrl) && (
+					<img
+						className={classes.image}
+						src={previewPicture || props.actualImageUrl}
+						alt="your pic"
+					></img>
+				)}
 				<input
 					ref={uploadPicture}
 					style={{ display: "none" }}
@@ -75,7 +77,7 @@ const UploadPicture = (props) => {
 						uploadPicture.current.click();
 					}}
 				>
-					Change
+					{previewPicture || props.actualImageUrl ? "Change" : "Upload"}
 				</Button>
 			</div>
 			{imageSrc && (

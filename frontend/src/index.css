@@ -41,5 +41,5 @@ h3 {
 #success-animation {
 	left: 50%;
 	z-index: 1;
-	position: absolute;
+	position: fixed;
 }

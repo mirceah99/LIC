@@ -6,7 +6,7 @@ const {
 } = require("../models/index");
 const MacroService = require("./macros.service");
 const MicroService = require("./micros.service");
-
+const { getImageLinkById } = require("../utilities/picture.services");
 const base = "/ingredients/";
 
 async function ingredientExists(name) {
@@ -39,6 +39,7 @@ exports.getIngredientByUID = async (encryptedId) => {
 		name: ingredient.name,
 		macros,
 		micros,
+		image: ingredient.image,
 	};
 };
 
@@ -70,15 +71,19 @@ exports.getIngredientUnitByUID = async (encryptedId, unitOfMeasurement) => {
 	};
 };
 
-exports.addIngredient = async (ingredient) => {
+exports.addIngredient = async (ingredient, pictureName) => {
+	//check if te ingredient name is valid ( all ingredients need to have a unique name)
 	if (await ingredientExists(ingredient.name))
 		throw new CustomError("Ingredient already exists", 409);
 	const macro = await MacroService.addMacro(ingredient.macros);
-	const micro = await MicroService.addMicro(ingredient.micro);
+	const micro = await MicroService.addMicro(ingredient.micros);
 	const addedIngredient = await ingredients.create({
 		name: ingredient.name,
 		macros: macro.dataValues.id,
 		micros: micro.dataValues.id,
+		image: pictureName
+			? getImageLinkById("ingredients", pictureName)
+			: "default.jpg",
 	});
 	return makeLink(base, addedIngredient.dataValues.id.toString());
 };

@@ -21,7 +21,7 @@ const ChangePasswordForm = () => {
 		headers: {},
 		body: { password, token: params.token },
 	};
-	const { error, isLoading, sendRequest, setError } = useHttp();
+	const { error, isLoading, sendRequest } = useHttp();
 	const register = (event) => {
 		setRegisterResponse(null);
 		event.preventDefault();
