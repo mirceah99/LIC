@@ -1,0 +1,11 @@
+.quantity-input {
+	width: 105px;
+	margin-left: 5px;
+}
+.wrapper {
+	display: flex;
+	align-items: center;
+}
+.wrapper p {
+	font-size: 16px;
+}

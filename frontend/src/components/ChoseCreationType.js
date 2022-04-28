@@ -46,7 +46,13 @@ const ChoseCreationType = () => {
 						recipe.
 					</p>
 				</div>
-				<Button>Add meal</Button>
+				<Button
+					onClick={() => {
+						navigation("/create/meal");
+					}}
+				>
+					Add meal
+				</Button>
 			</div>
 		</Card>
 	);

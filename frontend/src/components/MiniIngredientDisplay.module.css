@@ -1,0 +1,24 @@
+.wrapper-div {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 1px;
+}
+
+.wrapper-div img {
+	width: 45%;
+}
+.parent-div {
+	border: solid 1px;
+	margin-top: 10px;
+}
+.parent-div h2 {
+	text-align: center;
+}
+
+.add-button {
+	max-height: 38px;
+	text-align: center;
+	padding: 0.5rem 1rem;
+	margin-right: 3px;
+}

@@ -1,6 +1,9 @@
 const RecipeService = require("../services/recipe.service");
 
 exports.addRecipe = async (req, res) => {
+	//TODO CONTINUE THIS
+	if (req.addedPicture) req.body = JSON.parse(req.body.data);
+	console.log("req.addedPicture", req.addedPicture);
 	if (!req.body?.name || !req.body?.description) {
 		return res.status(400).json({
 			message: "Body should firstly contain name and description!",

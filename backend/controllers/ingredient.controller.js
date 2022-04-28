@@ -35,7 +35,7 @@ exports.addIngredient = async (req, res) => {
 exports.addIngredientUnit = async (req, res) => {
 	if (!req.body.unitOfMeasurement || !req.body.miligrams) {
 		return res.status(400).json({
-			message: "Body should contain unit of measurement and miligrams!",
+			message: "Body should contain unit of measurement and milligrams!",
 		});
 	}
 
@@ -56,7 +56,7 @@ exports.addIngredientUnit = async (req, res) => {
 exports.addIngredientUnit = async (req, res) => {
 	if (!req.body.unitOfMeasurement || !req.body.miligrams) {
 		return res.status(400).json({
-			message: "Body should contain unit of measurement and miligrams!",
+			message: "Body should contain unit of measurement and milligrams!",
 		});
 	}
 
@@ -165,6 +165,26 @@ exports.deleteIngredientUnitByUID = async (req, res) => {
 		return res
 			.status(200)
 			.json({ message: "Ingredient Unit successfully deleted" });
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+
+exports.getIngredientByQuery = async (req, res) => {
+	if (!req?.body?.query) {
+		return res.status(400).json({
+			message: "Body should contain query object.",
+		});
+	}
+
+	try {
+		const ingredients = await IngredientService.getIngredientByQuery(
+			req.body.query
+		);
+		return res.status(200).json({
+			data: ingredients,
+			message: "Ingredients successfully retrieved",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}

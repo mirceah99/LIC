@@ -1,0 +1,59 @@
+.create-meal h2 {
+	margin: 0 0 0 10px;
+}
+.create-meal {
+	padding: 0 10px;
+}
+.text-area {
+	margin-top: 10px;
+	width: 95%;
+	height: 150px;
+	font-size: 16px;
+}
+.duration-select {
+	max-height: 100px;
+	width: 55px;
+	text-align: center;
+	font-size: 18px;
+	margin: 0px 8px;
+}
+.duration-select::-webkit-scrollbar {
+	display: none;
+}
+.duration {
+	/* height: 100px; */
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+.servings {
+	display: flex;
+	text-align: center;
+}
+.tags-div {
+	margin-top: 10px;
+}
+.meal-picture {
+	width: 80%;
+	margin: auto;
+	margin-bottom: 10px;
+}
+.picture-zone {
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+.ingredients {
+	max-height: 60vh;
+	overflow: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+.ingredients::-webkit-scrollbar {
+	display: none;
+}
+.save {
+	display: flex;
+	justify-content: center;
+}

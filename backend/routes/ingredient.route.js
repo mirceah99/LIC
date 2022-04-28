@@ -18,6 +18,8 @@ router.post("/:id/unit", IngredientController.addIngredientUnit);
 
 router.get("/", IngredientController.getIngredientByName);
 
+router.post("/query", IngredientController.getIngredientByQuery);
+
 router.get("/:id", IngredientController.getIngredientByUID);
 
 router.get("/:id/unit/:unit", IngredientController.getIngredientUnitByUID);

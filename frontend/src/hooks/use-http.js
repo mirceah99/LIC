@@ -43,7 +43,7 @@ const useHttp = () => {
 					body,
 				});
 
-				if (!response.ok) {
+				if (!response || !response.ok) {
 					throw new Error(
 						(await response.json())?.message || "Request failed!"
 					);
@@ -55,7 +55,7 @@ const useHttp = () => {
 				applyDataFunction(data);
 			} catch (err) {
 				console.log(err);
-				setStatus(response.status);
+				setStatus(response?.status);
 				inCaseOfError(response);
 				setError(err || "Something failed, idk what bananas happens!🍌🍌");
 			} finally {

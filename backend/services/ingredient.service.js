@@ -1,8 +1,11 @@
 const { decryptId, makeLink, CustomError } = require("../middleware/utilities");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 const {
 	ingredients,
 	ingredientsForRecipe,
 	ingredientUnits,
+	macros,
 } = require("../models/index");
 const MacroService = require("./macros.service");
 const MicroService = require("./micros.service");
@@ -69,6 +72,16 @@ exports.getIngredientUnitByUID = async (encryptedId, unitOfMeasurement) => {
 	return {
 		miligrams: ingredientUnit.miligrams,
 	};
+};
+
+exports.getIngredientByQuery = async (query) => {
+	//TODO not checked
+	return await ingredients.findAll({
+		where: {
+			name: { [Op.like]: `%${query.name}%` },
+		},
+		include: { model: macros, required: true },
+	});
 };
 
 exports.addIngredient = async (ingredient, pictureName) => {

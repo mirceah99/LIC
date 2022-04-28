@@ -16,6 +16,7 @@ import Filter from "./components/UI/Filter";
 import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import ChoseCreationType from "./components/ChoseCreationType";
 import CreateIngredient from "./components/CreateIngredient";
+import CreateMeal from "./components/CreateMeal";
 
 function App() {
 	const authCtx = useContext(AuthContext);
@@ -39,6 +40,7 @@ function App() {
 
 					<Route path="/create" element={<ChoseCreationType />} />
 					<Route path="/create/ingredient" element={<CreateIngredient />} />
+					<Route path="/create/meal" element={<CreateMeal />} />
 
 					<Route path="/register" element={<RegisterForm />} />
 					<Route path="/reset-password" element={<ResetPasswordForm />} />
