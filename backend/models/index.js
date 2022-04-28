@@ -48,12 +48,12 @@ db.users.hasOne(db.review, {
 	onDelete: "CASCADE",
 });
 
-db.macros.hasOne(db.ingredients, {
+db.ingredients.belongsTo(db.macros, {
 	foreignKey: "macros",
 	onDelete: "CASCADE",
 });
 
-db.micros.hasOne(db.ingredients, {
+db.ingredients.belongsTo(db.micros, {
 	foreignKey: "micros",
 	onDelete: "CASCADE",
 });
@@ -80,7 +80,7 @@ db.users.hasMany(db.images, {
 });
 
 db.users.hasMany(db.collections, {
-	as: "collections"
+	as: "collections",
 });
 
 db.collections.belongsTo(db.users, {
