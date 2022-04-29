@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
+const { verifyToken } = require("../middleware/utilities");
+
 const RecipeController = require("../controllers/recipe.controller");
 const {
 	uploadRecipePictureMiddleware,
@@ -20,5 +22,7 @@ router.post("/:id/ingredient", RecipeController.linkIngredientToRecipe);
 router.post("/:id/ustensil", RecipeController.linkUstensilToRecipe);
 
 router.get("/:id", RecipeController.getRecipeById);
+
+router.post("/like", verifyToken, RecipeController.like);
 
 module.exports = router;

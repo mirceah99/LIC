@@ -1,7 +1,47 @@
 import classes from "./MealDetails.module.css";
 import Img1 from "../assets/demo-img/meal-1.jpg";
 import { Link } from "react-router-dom";
+import Button from "./UI/Button";
+import { useState, useEffect } from "react";
+import Toast from "./UI/Toast";
+import { useParams } from "react-router-dom";
+import useHttp from "../hooks/use-http";
+
 const MealDetails = () => {
+	const { sendRequest, status } = useHttp();
+	const [userLiked, setUserLiked] = useState(false);
+	const [showToast, setShowToast] = useState({ show: false });
+	const [mealData, setMealData] = useState({});
+	let params = useParams();
+
+	useEffect(() => {
+		const requestConfig = {
+			path: `/recipes/${params.id}`,
+			method: "GET",
+			headers: {},
+		};
+		sendRequest(requestConfig, (data) => {
+			console.log(data);
+		});
+	}, [params.id, sendRequest]);
+	function likeUnlike(like = true) {
+		const requestConfig = {
+			path: `/recipes/like`,
+			method: "POST",
+			headers: {},
+			body: {
+				recipeId: params.id,
+			},
+		};
+		if (like) {
+			requestConfig.body.toDo = "like";
+		} else {
+			requestConfig.body.toDo = "unlike";
+		}
+		sendRequest(requestConfig, (response) => {
+			console.log(response);
+		});
+	}
 	return (
 		<div className={classes["meal-details-wrapper"]}>
 			{/* nice bg image  */} {/* order button */}
@@ -12,11 +52,34 @@ const MealDetails = () => {
 			<div className={classes.title}>
 				<h3>Green chicken with black and red tomatoes + infinite rice </h3>
 			</div>
-			{/* some visual info */}
-			{/* created by */}
-			<p>
-				Created by: 👉<Link to="/TBD">mircea99</Link>👈
-			</p>
+			<div className={classes["like-wrapper"]}>
+				<p>
+					Created by: 👉<Link to="/TBD">mircea99</Link>👈
+				</p>
+				<Button
+					className={`${classes["like-button"]} ${
+						userLiked ? classes.liked : classes.grey
+					}`}
+					onClick={() => {
+						if (userLiked) {
+							setShowToast({ show: true, message: "You unlike this meal" });
+							likeUnlike(false);
+							setTimeout(() => {
+								setShowToast({ show: false });
+							}, 3000);
+						} else {
+							setShowToast({ show: true, message: "You like this meal" });
+							likeUnlike(true);
+							setTimeout(() => {
+								setShowToast({ show: false });
+							}, 3000);
+						}
+						setUserLiked((prevState) => !prevState);
+					}}
+				>
+					{`${userLiked ? "Liked" : "Like "}`}
+				</Button>
+			</div>
 			{/* description */}
 			<div className={classes.description}>
 				<p>
@@ -62,6 +125,7 @@ const MealDetails = () => {
 			<p>Calcium: 223mg</p>
 			<p>Iron: 223mg</p>
 			<p>Sodium: 223mg</p>
+			{showToast.show && <Toast message={showToast.message}></Toast>}
 		</div>
 	);
 };

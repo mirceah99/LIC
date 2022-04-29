@@ -17,3 +17,17 @@
 .meal-details-wrapper p {
 	padding: 0px 5px;
 }
+.like-wrapper {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.like-button {
+	transition: 0.5s;
+}
+.grey {
+	background-color: darkgrey;
+}
+.liked {
+	background-color: #d12115;
+}

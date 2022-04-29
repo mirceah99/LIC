@@ -1,4 +1,6 @@
 const { recipes } = require("../models/index");
+const { usersLikes } = require("../models/index");
+
 const { makeLink, decryptId } = require("../middleware/utilities");
 const ImageService = require("./image.service");
 const TagService = require("./tag.service");
@@ -23,7 +25,13 @@ exports.addRecipe = async (recipe) => {
 
 exports.getRecipeById = async (encryptedId) => {
 	const decryptedId = decryptId(encryptedId)[0];
+
+	//get recipe main data
 	const recipe = (await recipes.findByPk(decryptedId)).dataValues;
+
+	//get recipe ingredients
+
+	//TBD
 	let recipeResponse = {
 		name: recipe.name,
 		description: recipe.description,
@@ -53,4 +61,24 @@ exports.linkIngredientToRecipe = async (ingredientForRecipe, recipeId) => {
 
 exports.linkUstensilToRecipe = async (ustensilId, recipeId) => {
 	await UstensilService.linkUstensilToRecipe(ustensilId, recipeId);
+};
+
+exports.like = async ({ recipeId, toDo }, userId) => {
+	const decryptedRecipeId = decryptId(recipeId)[0];
+	const decryptedUserId = decryptId(userId)[0];
+
+	if (toDo === "like") {
+		await usersLikes.create({
+			userId: decryptedRecipeId,
+			recipeId: decryptedUserId,
+		});
+	}
+	if (toDo === "unlike") {
+		await usersLikes.destroy({
+			where: {
+				userId: decryptedRecipeId,
+				recipeId: decryptedUserId,
+			},
+		});
+	}
 };

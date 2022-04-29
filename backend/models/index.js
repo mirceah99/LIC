@@ -91,5 +91,6 @@ db.collections.belongsTo(db.users, {
 // a user can like more recipe, a recipe can be liked by more users
 db.users.belongsToMany(db.recipes, { through: "usersLikes" });
 db.recipes.belongsToMany(db.users, { through: "usersLikes" });
+db.usersLikes = sequelize.models.usersLikes;
 
 module.exports = db;

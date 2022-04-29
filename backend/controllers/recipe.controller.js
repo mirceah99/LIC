@@ -151,3 +151,36 @@ exports.linkUstensilToRecipe = async (req, res) => {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
+
+exports.like = async (req, res) => {
+	try {
+		if (!req.body?.recipeId) {
+			return res.status(400).json({
+				message: "Body should contain an recipe id (recipeId)!",
+			});
+		}
+		if (!req.body?.toDo) {
+			return res.status(400).json({
+				message:
+					"Body should contain a toDo attribute ( it can be like or unlike)!",
+			});
+		}
+		if (req.body?.toDo !== "like") {
+			if (req.body?.toDo !== "unlike") {
+				return res.status(400).json({
+					message:
+						"Body should contain a toDo attribute ( it can be like or unlike)!",
+				});
+			}
+		}
+		console.log("req.body", req.body, "req.user.id", req.user.id);
+		const response = await RecipeService.like(req.body, req.user.id);
+		return res.status(200).json({
+			data: response,
+			message: "Success operation!",
+		});
+	} catch (e) {
+		console.log(e);
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};

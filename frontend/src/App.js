@@ -52,7 +52,7 @@ function App() {
 
 					<Route path="/" element={"maine page TBD"} />
 					<Route path="/meal" element={<Meal />} />
-					<Route path="/meal-details" element={<MealDetails />} />
+					<Route path="/meal-details/:id" element={<MealDetails />} />
 					{authCtx.isLoggedIn && (
 						<Route path="/my-profile" element={<MyProfile />} />
 					)}
