@@ -2,16 +2,18 @@ import classes from "./MealDetails.module.css";
 import Img1 from "../assets/demo-img/meal-1.jpg";
 import { Link } from "react-router-dom";
 import Button from "./UI/Button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Toast from "./UI/Toast";
 import { useParams } from "react-router-dom";
 import useHttp from "../hooks/use-http";
+import AuthContext from "../store/auth-context";
 
 const MealDetails = () => {
 	const { sendRequest, status } = useHttp();
 	const [userLiked, setUserLiked] = useState(false);
 	const [showToast, setShowToast] = useState({ show: false });
 	const [mealData, setMealData] = useState({});
+	const authCtx = useContext(AuthContext);
 	let params = useParams();
 
 	useEffect(() => {
@@ -61,6 +63,16 @@ const MealDetails = () => {
 						userLiked ? classes.liked : classes.grey
 					}`}
 					onClick={() => {
+						if (!authCtx.isLoggedIn) {
+							setShowToast({
+								show: true,
+								message: "You must be logged in to like a recipe.",
+							});
+							setTimeout(() => {
+								setShowToast({ show: false });
+							}, 3000);
+							return;
+						}
 						if (userLiked) {
 							setShowToast({ show: true, message: "You unlike this meal" });
 							likeUnlike(false);
