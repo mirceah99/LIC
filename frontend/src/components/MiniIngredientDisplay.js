@@ -8,8 +8,8 @@ const MiniIngredientDisplay = (props) => {
 				<img alt="ingredient" src={props.data.image}></img>
 				<div>
 					<p>{`Protein 🥩 ${props.data.macro.protein}`}</p>
-					<p>{`Fat 🥑 ${props.data.macro.protein}`}</p>
-					<p>{`Carbo 🍞 ${props.data.macro.protein}`}</p>
+					<p>{`Fat 🥑 ${props.data.macro.fat}`}</p>
+					<p>{`Carbo 🍞 ${props.data.macro.carbs}`}</p>
 				</div>
 				<Button
 					onClick={props.onAdd.bind(null, {
