@@ -88,4 +88,8 @@ db.collections.belongsTo(db.users, {
 	as: "user",
 });
 
+// a user can like more recipe, a recipe can be liked by more users
+db.users.belongsToMany(db.recipes, { through: "usersLikes" });
+db.recipes.belongsToMany(db.users, { through: "usersLikes" });
+
 module.exports = db;
