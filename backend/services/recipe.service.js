@@ -30,12 +30,44 @@ exports.getRecipeById = async (encryptedId) => {
 	let recipe = await recipes.findByPk(decryptedId);
 
 	//get recipe ingredients
-	console.log(recipe);
 	const ingredients = await recipe.getIngredients();
-	console.log(ingredients);
+
+	//get data for each ingredient and sum macros and micros
+	const total = {
+		protein: 0,
+		carbs: 0,
+		fat: 0,
+		fiber: 0,
+		sugar: 0,
+		saturated: 0,
+		polyunsaturated: 0,
+		monounsaturated: 0,
+		trans: 0,
+		sodium: 0,
+		potassium: 0,
+		vitaminA: 0,
+		vitaminC: 0,
+		calcium: 0,
+		iron: 0,
+	};
+	for (let ingredient of ingredients) {
+		const { dataValues: macros } = await ingredient.getMacro();
+		const { dataValues: micros } = await ingredient.getMicro();
+		const multiplier =
+			ingredient.dataValues.ingredientsForRecipe.dataValues.quantity;
+		ingredient.dataValues.macros = macros;
+		ingredient.dataValues.micros = micros;
+		for (let attr in macros) {
+			total[attr] += +macros[attr] * multiplier;
+		}
+		for (let attr in micros) {
+			total[attr] += +micros[attr] * multiplier;
+		}
+	}
+	// calculate total calories
+	total.calories = total.protein * 4 + total.carbs * 4 + total.fat * 9;
 
 	recipe = recipe.dataValues;
-	//TBD
 	let recipeResponse = {
 		name: recipe.name,
 		description: recipe.description,
@@ -45,6 +77,8 @@ exports.getRecipeById = async (encryptedId) => {
 		likes: recipe.likes,
 	};
 	recipeResponse.ingredients = ingredients;
+	recipeResponse.total = total;
+	delete recipeResponse.total.id;
 	return recipeResponse;
 };
 
