@@ -1,13 +1,21 @@
 const { instructions } = require("../models/index");
-const { decryptId, CustomError } = require("../middleware/utilities");
+const { CustomError } = require("../middleware/utilities");
 
-exports.addInstructionToRecipe = async (instruction, encryptedRecipeId) => {
+exports.addInstructionToRecipe = (instruction, recipeId) => {
 	if (!instruction.description || !instruction.step)
-		throw new CustomError("Instruction is invalid", 400);
-	const decryptedRecipeId = decryptId(encryptedRecipeId)[0];
-	return await instructions.create({
+		throw new CustomError("Instructions should contain description and step", 400);
+
+	return instructions.create({
 		description: instruction.description,
 		step: instruction.step,
-		recipeId: decryptedRecipeId,
-	});
+		recipeId: recipeId,
+	})
+		.then(res => {
+			console.log("Added instruction ", instruction, " to recipe with id ", recipeId);
+			return res.get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while adding instruction to recipe", 500);
+		})
 };

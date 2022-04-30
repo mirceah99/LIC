@@ -122,19 +122,29 @@ exports.addIngredientUnit = async (ingredientUnit, encryptedIngredientId) => {
 	);
 };
 
-exports.linkIngredientToRecipe = async (
-	ingredientForRecipe,
-	encryptedRecipeId
-) => {
-	const decryptedIngredientForRecipeId = decryptId(ingredientForRecipe.id)[0];
-	const decryptedRecipeId = decryptId(encryptedRecipeId)[0];
-	return await ingredientsForRecipe.create({
-		ingredientId: decryptedIngredientForRecipeId,
-		recipeId: decryptedRecipeId,
+exports.linkIngredientToRecipe = (ingredientForRecipe, recipeId) => {
+	if (
+		!ingredientForRecipe.id ||
+		!ingredientForRecipe.quantity ||
+		!ingredientForRecipe.unitOfMeasurement
+	)
+		throw new CustomError("Ingredient for recipe should contain id, quantity and unit of measurement", 400);
+
+	return ingredientsForRecipe.create({
+		ingredientId: ingredientForRecipe.id,
+		recipeId: recipeId,
 		quantity: ingredientForRecipe.quantity,
 		unitOfMeasurement: ingredientForRecipe.unitOfMeasurement,
-		optionality: ingredientForRecipe.optionality,
-	});
+		optionality: ingredientForRecipe.optionality || false,
+	})
+		.then(res => {
+			console.log("Linked ingredient with id ",ingredientForRecipe.id," to recipe with id ",recipeId);
+			return res.get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while linking ingredient to recipe", 500);
+		})
 };
 
 exports.updateIngredientByUID = async (encryptedId, newIngredient) => {
@@ -151,7 +161,7 @@ exports.updateIngredientByUID = async (encryptedId, newIngredient) => {
 		},
 		{
 			where: { id: decryptedId },
-		}
+		},
 	);
 	return makeLink(base, decryptedId);
 };
@@ -159,7 +169,7 @@ exports.updateIngredientByUID = async (encryptedId, newIngredient) => {
 exports.updateIngredientUnitByUID = async (
 	encryptedId,
 	unitOfMeasurement,
-	newIngredientUnit
+	newIngredientUnit,
 ) => {
 	const decryptedId = decryptId(encryptedId)[0];
 	let ingredientUnit = await ingredientUnits.findAll({
@@ -179,7 +189,7 @@ exports.updateIngredientUnitByUID = async (
 				id: decryptedId,
 				unitOfMeasurement: unitOfMeasurement,
 			},
-		}
+		},
 	);
 	return makeLink(base, decryptedId) + "/unit/" + unitOfMeasurement;
 };
