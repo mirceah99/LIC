@@ -1,26 +1,55 @@
 const { recipes } = require("../models/index");
 const { usersLikes } = require("../models/index");
 
-const { makeLink, decryptId } = require("../middleware/utilities");
+const { decryptId, CustomError } = require("../middleware/utilities");
 const ImageService = require("./image.service");
 const TagService = require("./tag.service");
 const InstructionService = require("./instruction.service");
 const IngredientService = require("./ingredient.service");
 const UstensilService = require("./ustensil.service");
+const { getImageLinkById } = require("../utilities/picture.services");
 
-const base = "/recipes/";
-
-exports.addRecipe = async (recipe) => {
-	const addedRecipe = await recipes.create({
+exports.addRecipe = (recipe) => {
+	return recipes.create({
 		name: recipe.name,
 		description: recipe.description,
 		prepTime: recipe.prepTime,
 		cookingTime: recipe.cookingTime,
 		servingSize: recipe.servingSize,
 		likes: 0,
-	});
+		author: recipe.author || null,
+		image: recipe.pictureName
+			? getImageLinkById("recipes", recipe.pictureName)
+			: "default.jpg",
+	})
+		.then(async res => {
+			console.log("Added recipe", res.get());
+			const recipeId = res.get().id;
 
-	return makeLink(base, addedRecipe.dataValues.id.toString());
+			for (let ingredientForRecipe of recipe.ingredients) {
+				await this.linkIngredientToRecipe(ingredientForRecipe, recipeId);
+			}
+
+			for (let index = 0; index < recipe.instructions.length; index++) {
+				let instructionObject = {
+					step: index + 1,
+					description: recipe.instructions[index],
+				};
+				await this.addInstructionToRecipe(instructionObject, recipeId);
+			}
+
+			if (recipe.tags) {
+				for (let tag of recipe.tags) {
+					await this.linkTagToRecipeByText(tag, recipeId);
+				}
+			}
+
+			return res.get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError(err.message, err.statusCode || 500);
+		})
 };
 
 exports.getRecipeById = async (encryptedId) => {
@@ -47,8 +76,8 @@ exports.addImageToRecipe = async (image, recipeId) => {
 	await ImageService.addImageToRecipe(image, recipeId);
 };
 
-exports.linkTagToRecipe = async (tagId, recipeId) => {
-	await TagService.linkTagToRecipe(tagId, recipeId);
+exports.linkTagToRecipeByText = async (tagText, recipeId) => {
+	await TagService.linkTagToRecipeByText(tagText, recipeId);
 };
 
 exports.addInstructionToRecipe = async (instruction, recipeId) => {

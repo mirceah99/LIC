@@ -1,25 +1,65 @@
 const RecipeService = require("../services/recipe.service");
+const { decryptId, makeLink } = require("../middleware/utilities");
+
+const base = "/recipes/";
 
 exports.addRecipe = async (req, res) => {
-	//TODO CONTINUE THIS
-	if (req.addedPicture) req.body = JSON.parse(req.body.data);
-	console.log("req.addedPicture", req.addedPicture);
-	if (!req.body?.name || !req.body?.description) {
-		return res.status(400).json({
-			message: "Body should firstly contain name and description!",
-		});
-	}
-
-	if (!req.body?.prepTime || !req.body?.cookingTime || !req.body?.servingSize) {
-		return res.status(400).json({
-			message: "Body should contain prep time, cooking time and serving size!",
-		});
-	}
-
 	try {
-		const recipeLink = await RecipeService.addRecipe(req.body);
+		if (req.addedPicture) req.body = JSON.parse(req.body.data);
+
+		if (!req.body?.name || !req.body?.description) {
+			return res.status(400).json({
+				message: "Body should firstly contain name and description!",
+			});
+		}
+		if (!req.body?.prepTime || !(req.body?.cookingTime || req.body?.cookingTime === 0) || !req.body?.servingSize) {
+			return res.status(400).json({
+				message: "Body should contain prep time, cooking time and serving size and they can't be null!",
+			});
+		}
+
+		if (!req.body?.ingredients || req.body?.ingredients?.length === 0) {
+			return res.status(400).json({
+				message: "Body should contain ingredients!",
+			});
+		}
+
+		if (!req.body?.instructions || req.body?.instructions?.length === 0) {
+			return res.status(400).json({
+				message: "Body should contain instructions!",
+			});
+		}
+		for (let index = 0; index < req.body.ingredients.length; index++) {
+			req.body.ingredients[index].id = (decryptId(req.body.ingredients[index].id))[0];
+			if (!req.body.ingredients[index].id)
+				return res.status(404).json({
+					message: `Ingredient ${index + 1} not found`,
+				});
+		}
+
+		for (let instruction of req.body.instructions) {
+			if (typeof instruction !== "string")
+				return res.status(404).json({
+					message: `Instructions should be strings`,
+				});
+		}
+
+		if (req.body.author) {
+			req.body.author = (decryptId(req.body.author))[0];
+			if (!req.body.author)
+				return res.status(404).json({
+					message: "Author not found",
+				});
+		}
+
+		const addedRecipe = await RecipeService.addRecipe({
+			...req.body,
+			pictureName: req.addedPicture,
+		});
+		const addedRecipeResponse = makeLink(base, addedRecipe.id);
+
 		return res.status(200).json({
-			data: recipeLink,
+			data: addedRecipeResponse,
 			message: "Recipe successfully added to database",
 		});
 	} catch (e) {
