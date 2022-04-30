@@ -69,13 +69,17 @@ const CreateMeal = () => {
 		});
 	}
 	const saveMeal = async () => {
+		const ingredientsWithUnit = [];
+		addedIngredients.forEach((ingredient) => {
+			ingredientsWithUnit.push({ ...ingredient, unitOfMeasurement: "100g" });
+		});
 		const data = {
 			name,
 			description,
 			prepTime: +prepTime.minutes + +prepTime.hours * 60,
 			cookingTime: +cookingTime.minutes + +cookingTime.hours * 60,
 			servingSize: nrOfServings,
-			ingredients: addedIngredients,
+			ingredients: ingredientsWithUnit,
 			instructions: steps.values,
 			tags: selectedTags,
 		};
