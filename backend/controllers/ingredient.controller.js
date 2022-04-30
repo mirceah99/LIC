@@ -1,5 +1,5 @@
 const IngredientService = require("../services/ingredient.service");
-
+const { encryptId } = require("../middleware/utilities");
 exports.addIngredient = async (req, res) => {
 	if (req.addedPicture) req.body = JSON.parse(req.body.data);
 	if (!req.body?.name || !req.body?.macros) {
@@ -181,6 +181,9 @@ exports.getIngredientByQuery = async (req, res) => {
 		const ingredients = await IngredientService.getIngredientByQuery(
 			req.body.query
 		);
+		ingredients.forEach((ingredient) => {
+			ingredient.dataValues.id = encryptId(ingredient.dataValues.id);
+		});
 		return res.status(200).json({
 			data: ingredients,
 			message: "Ingredients successfully retrieved",
