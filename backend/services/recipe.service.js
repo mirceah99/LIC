@@ -27,10 +27,14 @@ exports.getRecipeById = async (encryptedId) => {
 	const decryptedId = decryptId(encryptedId)[0];
 
 	//get recipe main data
-	const recipe = (await recipes.findByPk(decryptedId)).dataValues;
+	let recipe = await recipes.findByPk(decryptedId);
 
 	//get recipe ingredients
+	console.log(recipe);
+	const ingredients = await recipe.getIngredients();
+	console.log(ingredients);
 
+	recipe = recipe.dataValues;
 	//TBD
 	let recipeResponse = {
 		name: recipe.name,
@@ -40,6 +44,7 @@ exports.getRecipeById = async (encryptedId) => {
 		servingSize: recipe.servingSize,
 		likes: recipe.likes,
 	};
+	recipeResponse.ingredients = ingredients;
 	return recipeResponse;
 };
 
