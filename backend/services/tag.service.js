@@ -1,4 +1,4 @@
-const { tagsForRecipe, tags } = require("../models/index");
+const { tagsForRecipe, tags, authors } = require("../models/index");
 const { makeLink, decryptId, CustomError } = require("../middleware/utilities");
 
 const base = "/tags/";
@@ -22,13 +22,20 @@ exports.addTag = async (tag) => {
 	return makeLink(base, addedTag.dataValues.id.toString());
 };
 
-exports.linkTagToRecipe = async (encryptedTagId, encryptedRecipeId) => {
-	const decryptedTagId = decryptId(encryptedTagId)[0];
-	const decryptedRecipeId = decryptId(encryptedRecipeId)[0];
+exports.linkTagToRecipeByText = async (tagText, recipeId) => {
+	const tag = await this.getTagByText(tagText);
 	return await tagsForRecipe.create({
-		tagId: decryptedTagId,
-		recipeId: decryptedRecipeId,
-	});
+		tagId: tag.id,
+		recipeId: recipeId,
+	})
+		.then(res => {
+			console.log(`Linked tag with id ${tag.id} to recipe with id ${recipeId}`)
+			return res;
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError(`Error while linking tag ${tag.text} to recipe with id ${recipeId}`, 500);
+		})
 };
 
 exports.getTagByUID = async (encryptedId) => {
@@ -46,10 +53,15 @@ exports.getTagByText = async (text) => {
 		where: {
 			text,
 		},
-	});
-	if (tag.length === 0) throw new CustomError("Tag does not exist", 404);
-	else tag = tag[0].dataValues;
-	return makeLink(base, tag.id.toString());
+	})
+		.then(res => res)
+		.catch(err => {
+			console.error(err);
+			throw new CustomError(`Error while getting tag ${text}`, 500);
+		})
+	if (!tag || !tag[0]) throw new CustomError(`Tag ${text} not found`, 404);
+	console.log("Got tag", tag[0].get());
+	return tag[0].get();
 };
 
 exports.deleteTagByUID = async (encryptedId) => {
