@@ -63,14 +63,6 @@ db.authors.hasOne(db.recipes, {
 	onDelete: "CASCADE",
 });
 
-db.recipes.hasMany(db.images, {
-	foreignKey: "recipeId",
-});
-
-db.recipes.hasMany(db.tags, {
-	foreignKey: "recipeId",
-});
-
 db.recipes.hasMany(db.instructions, {
 	foreignKey: "recipeId",
 });
