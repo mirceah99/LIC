@@ -30,6 +30,21 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 				defaultValue: "default.png",
 			},
+			totalCalories: {
+				type: DataTypes.FLOAT,
+			},
+			totalProtein: {
+				type: DataTypes.FLOAT,
+			},
+			totalCarbs: {
+				type: DataTypes.FLOAT,
+			},
+			totalFat: {
+				type: DataTypes.FLOAT,
+			},
+			totalFiber: {
+				type: DataTypes.FLOAT,
+			},
 		},
 		{ timestamps: false }
 	);
