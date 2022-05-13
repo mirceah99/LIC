@@ -1,7 +1,11 @@
 const { recipes } = require("../models/index");
 const { usersLikes } = require("../models/index");
 
-const { decryptId, CustomError } = require("../middleware/utilities");
+const {
+	decryptId,
+	encryptId,
+	CustomError,
+} = require("../middleware/utilities");
 const ImageService = require("./image.service");
 const TagService = require("./tag.service");
 const InstructionService = require("./instruction.service");
@@ -10,19 +14,20 @@ const UstensilService = require("./ustensil.service");
 const { getImageLinkById } = require("../utilities/picture.services");
 
 exports.addRecipe = (recipe) => {
-	return recipes.create({
-		name: recipe.name,
-		description: recipe.description,
-		prepTime: recipe.prepTime,
-		cookingTime: recipe.cookingTime,
-		servingSize: recipe.servingSize,
-		likes: 0,
-		author: recipe.author || null,
-		image: recipe.pictureName
-			? getImageLinkById("recipes", recipe.pictureName)
-			: "default.jpg",
-	})
-		.then(async res => {
+	return recipes
+		.create({
+			name: recipe.name,
+			description: recipe.description,
+			prepTime: recipe.prepTime,
+			cookingTime: recipe.cookingTime,
+			servingSize: recipe.servingSize,
+			likes: 0,
+			author: recipe.author || null,
+			image: recipe.pictureName
+				? getImageLinkById("recipes", recipe.pictureName)
+				: "default.jpg",
+		})
+		.then(async (res) => {
 			console.log("Added recipe", res.get());
 			const recipeId = res.get().id;
 
@@ -46,10 +51,10 @@ exports.addRecipe = (recipe) => {
 
 			return res.get();
 		})
-		.catch(err => {
+		.catch((err) => {
 			console.error(err);
 			throw new CustomError(err.message, err.statusCode || 500);
-		})
+		});
 };
 
 exports.getRecipeById = async (encryptedId) => {
@@ -104,6 +109,8 @@ exports.getRecipeById = async (encryptedId) => {
 		cookingTime: recipe.cookingTime,
 		servingSize: recipe.servingSize,
 		likes: recipe.likes,
+		image: recipe.image,
+		id: encryptId(recipe.id),
 	};
 	recipeResponse.ingredients = ingredients;
 	recipeResponse.total = total;
@@ -137,8 +144,8 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 
 	if (toDo === "like") {
 		await usersLikes.create({
-			userId: decryptedRecipeId,
-			recipeId: decryptedUserId,
+			userId: decryptedUserId,
+			recipeId: decryptedRecipeId,
 		});
 	}
 	if (toDo === "unlike") {
@@ -149,4 +156,23 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 			},
 		});
 	}
+};
+exports.getLiked = async (userId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const recipes = await usersLikes.findAll({
+		attributes: ["recipeId"],
+		where: {
+			userId: decryptedUserId,
+		},
+	});
+	console.log(recipes);
+	const encryptedRecipes = [];
+	recipes.forEach((recipe) => {
+		encryptedRecipes.push(
+			`${process.env.baseUrl}/api/recipes/${encryptId(
+				recipe.dataValues.recipeId
+			)}`
+		);
+	});
+	return encryptedRecipes;
 };

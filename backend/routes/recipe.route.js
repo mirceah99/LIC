@@ -25,4 +25,6 @@ router.get("/:id", RecipeController.getRecipeById);
 
 router.post("/like", verifyToken, RecipeController.like);
 
+router.get("/liked/:userId", RecipeController.getLiked);
+
 module.exports = router;
