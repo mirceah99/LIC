@@ -1,4 +1,4 @@
-const { recipes } = require("../models/index");
+const { recipes, instructions } = require("../models/index");
 const { usersLikes } = require("../models/index");
 
 const {
@@ -63,6 +63,19 @@ exports.getRecipeById = async (encryptedId) => {
 	//get recipe main data
 	let recipe = await recipes.findByPk(decryptedId);
 
+	//get recipe steps
+	const stepsResponse = await instructions.findAll({
+		where: {
+			recipeId: decryptedId,
+		},
+		order: ["step"],
+	});
+	const steps = [];
+
+	stepsResponse.forEach(({ dataValues: values }) => {
+		steps.push(values.description);
+	});
+
 	//get recipe ingredients
 	const ingredients = await recipe.getIngredients();
 
@@ -112,6 +125,7 @@ exports.getRecipeById = async (encryptedId) => {
 		image: recipe.image,
 		id: encryptId(recipe.id),
 	};
+	recipeResponse.steps = steps;
 	recipeResponse.ingredients = ingredients;
 	recipeResponse.total = total;
 	delete recipeResponse.total.id;
@@ -151,8 +165,8 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 	if (toDo === "unlike") {
 		await usersLikes.destroy({
 			where: {
-				userId: decryptedRecipeId,
-				recipeId: decryptedUserId,
+				userId: decryptedUserId,
+				recipeId: decryptedRecipeId,
 			},
 		});
 	}
@@ -165,7 +179,6 @@ exports.getLiked = async (userId) => {
 			userId: decryptedUserId,
 		},
 	});
-	console.log(recipes);
 	const encryptedRecipes = [];
 	recipes.forEach((recipe) => {
 		encryptedRecipes.push(
@@ -175,4 +188,19 @@ exports.getLiked = async (userId) => {
 		);
 	});
 	return encryptedRecipes;
+};
+
+exports.userLike = async (userId, recipeId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const decryptedRecipeId = decryptId(recipeId)[0];
+
+	const recipes = await usersLikes.findAll({
+		limit: 1,
+		where: {
+			recipeId: decryptedRecipeId,
+			userId: decryptedUserId,
+		},
+	});
+
+	return !!recipes.length;
 };

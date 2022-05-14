@@ -1,13 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define(
-		'recipe',
+		"recipe",
 		{
 			name: {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
 			description: {
-				type: DataTypes.STRING,
+				type: DataTypes.STRING(5000),
 				allowNull: false,
 			},
 			prepTime: {
@@ -31,6 +31,6 @@ module.exports = (sequelize, DataTypes) => {
 				defaultValue: "default.png",
 			},
 		},
-		{ timestamps: false },
+		{ timestamps: false }
 	);
 };

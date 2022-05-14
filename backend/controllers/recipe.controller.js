@@ -233,8 +233,22 @@ exports.like = async (req, res) => {
 
 exports.getLiked = async (req, res) => {
 	try {
-		console.log("ok");
 		const response = await RecipeService.getLiked(req.params.userId);
+		return res.status(200).json({
+			data: response,
+			message: "Success operation!",
+		});
+	} catch (e) {
+		console.log(e);
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+exports.userLike = async (req, res) => {
+	try {
+		const response = await RecipeService.userLike(
+			req.params.userId,
+			req.params.recipeId
+		);
 		return res.status(200).json({
 			data: response,
 			message: "Success operation!",
