@@ -31,3 +31,21 @@
 .liked {
 	background-color: #d12115;
 }
+.loading {
+	display: flex;
+	margin: 20px;
+	align-items: center;
+	justify-content: center;
+}
+.step {
+	border-top: 1px;
+	border-bottom: 1px;
+	border-left: 0px;
+	border-right: 0px;
+	border-color: black;
+	border-style: solid;
+	margin: 5px 0px;
+}
+.step p {
+	margin: 0;
+}
