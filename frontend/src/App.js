@@ -37,7 +37,7 @@ function App() {
 					{!authCtx.isLoggedIn && (
 						<Route path="/login" element={<LoginForm />} />
 					)}
-					<Route path="/search-settings" element={<Filter />} />
+					<Route path="/search" element={<Filter />} />
 
 					<Route path="/create" element={<ChoseCreationType />} />
 					<Route path="/create/ingredient" element={<CreateIngredient />} />
