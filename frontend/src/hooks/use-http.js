@@ -32,7 +32,7 @@ const useHttp = () => {
 					body = requestConfig.body;
 					delete headers["Content-Type"];
 				} else {
-					body = JSON.stringify(requestConfig.body);
+					if (!body) body = JSON.stringify(requestConfig.body);
 				}
 				const url = requestConfig.path.includes(baseUrl)
 					? requestConfig.path
