@@ -258,3 +258,18 @@ exports.userLike = async (req, res) => {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
+exports.searchRecipes = async (req, res) => {
+	try {
+		const recipesList = await RecipeService.searchRecipes(req.body);
+		let recipesResponse = [];
+		for (let recipe of recipesList)
+			recipesResponse.push(makeLink(base, recipe.id));
+		return res.status(200).json({
+			data: recipesResponse,
+			message: "Recipes successfully searched!",
+		});
+	} catch (e) {
+		console.log(e);
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
