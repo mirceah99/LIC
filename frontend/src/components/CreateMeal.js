@@ -102,7 +102,6 @@ const CreateMeal = () => {
 		sendRequest(requestConfig, (response) => {
 			console.log(response);
 		});
-		console.log(data);
 	};
 	return (
 		<Card>

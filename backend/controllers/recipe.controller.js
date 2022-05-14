@@ -12,9 +12,14 @@ exports.addRecipe = async (req, res) => {
 				message: "Body should firstly contain name and description!",
 			});
 		}
-		if (!req.body?.prepTime || !(req.body?.cookingTime || req.body?.cookingTime === 0) || !req.body?.servingSize) {
+		if (
+			!req.body?.prepTime ||
+			!(req.body?.cookingTime || req.body?.cookingTime === 0) ||
+			!req.body?.servingSize
+		) {
 			return res.status(400).json({
-				message: "Body should contain prep time, cooking time and serving size and they can't be null!",
+				message:
+					"Body should contain prep time, cooking time and serving size and they can't be null!",
 			});
 		}
 
@@ -30,7 +35,9 @@ exports.addRecipe = async (req, res) => {
 			});
 		}
 		for (let index = 0; index < req.body.ingredients.length; index++) {
-			req.body.ingredients[index].id = (decryptId(req.body.ingredients[index].id))[0];
+			req.body.ingredients[index].id = decryptId(
+				req.body.ingredients[index].id
+			)[0];
 			if (!req.body.ingredients[index].id)
 				return res.status(404).json({
 					message: `Ingredient ${index + 1} not found`,
@@ -45,7 +52,7 @@ exports.addRecipe = async (req, res) => {
 		}
 
 		if (req.body.author) {
-			req.body.author = (decryptId(req.body.author))[0];
+			req.body.author = decryptId(req.body.author)[0];
 			if (!req.body.author)
 				return res.status(404).json({
 					message: "Author not found",
@@ -213,7 +220,6 @@ exports.like = async (req, res) => {
 				});
 			}
 		}
-		console.log("req.body", req.body, "req.user.id", req.user.id);
 		const response = await RecipeService.like(req.body, req.user.id);
 		return res.status(200).json({
 			data: response,
@@ -225,11 +231,38 @@ exports.like = async (req, res) => {
 	}
 };
 
+exports.getLiked = async (req, res) => {
+	try {
+		const response = await RecipeService.getLiked(req.params.userId);
+		return res.status(200).json({
+			data: response,
+			message: "Success operation!",
+		});
+	} catch (e) {
+		console.log(e);
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+exports.userLike = async (req, res) => {
+	try {
+		const response = await RecipeService.userLike(
+			req.params.userId,
+			req.params.recipeId
+		);
+		return res.status(200).json({
+			data: response,
+			message: "Success operation!",
+		});
+	} catch (e) {
+		console.log(e);
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
 exports.searchRecipes = async (req, res) => {
 	try {
 		const recipesList = await RecipeService.searchRecipes(req.body);
 		let recipesResponse = [];
-		for(let recipe of recipesList)
+		for (let recipe of recipesList)
 			recipesResponse.push(makeLink(base, recipe.id));
 		return res.status(200).json({
 			data: recipesResponse,
@@ -239,4 +272,4 @@ exports.searchRecipes = async (req, res) => {
 		console.log(e);
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
-}
+};

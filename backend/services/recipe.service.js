@@ -1,7 +1,17 @@
-const { recipes, ingredients, macros, micros } = require("../models/index");
+const {
+	recipes,
+	ingredients,
+	macros,
+	micros,
+	instructions,
+} = require("../models/index");
 const { usersLikes } = require("../models/index");
 
-const { decryptId, CustomError } = require("../middleware/utilities");
+const {
+	decryptId,
+	encryptId,
+	CustomError,
+} = require("../middleware/utilities");
 const ImageService = require("./image.service");
 const TagService = require("./tag.service");
 const InstructionService = require("./instruction.service");
@@ -12,19 +22,20 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 exports.addRecipe = (recipe) => {
-	return recipes.create({
-		name: recipe.name,
-		description: recipe.description,
-		prepTime: recipe.prepTime,
-		cookingTime: recipe.cookingTime,
-		servingSize: recipe.servingSize,
-		likes: 0,
-		author: recipe.author || null,
-		image: recipe.pictureName
-			? getImageLinkById("recipes", recipe.pictureName)
-			: "default.jpg",
-	})
-		.then(async res => {
+	return recipes
+		.create({
+			name: recipe.name,
+			description: recipe.description,
+			prepTime: recipe.prepTime,
+			cookingTime: recipe.cookingTime,
+			servingSize: recipe.servingSize,
+			likes: 0,
+			author: recipe.author || null,
+			image: recipe.pictureName
+				? getImageLinkById("recipes", recipe.pictureName)
+				: "default.jpg",
+		})
+		.then(async (res) => {
 			console.log("Added recipe", res.get());
 			const recipeId = res.get().id;
 
@@ -48,10 +59,85 @@ exports.addRecipe = (recipe) => {
 
 			return res.get();
 		})
-		.catch(err => {
+		.catch((err) => {
 			console.error(err);
 			throw new CustomError(err.message, err.statusCode || 500);
-		})
+		});
+};
+
+exports.getRecipeById = async (encryptedId) => {
+	const decryptedId = decryptId(encryptedId)[0];
+
+	//get recipe main data
+	let recipe = await recipes.findByPk(decryptedId);
+
+	//get recipe steps
+	const stepsResponse = await instructions.findAll({
+		where: {
+			recipeId: decryptedId,
+		},
+		order: ["step"],
+	});
+	const steps = [];
+
+	stepsResponse.forEach(({ dataValues: values }) => {
+		steps.push(values.description);
+	});
+
+	//get recipe ingredients
+	const ingredients = await recipe.getIngredients();
+
+	//get data for each ingredient and sum macros and micros
+	const total = {
+		protein: 0,
+		carbs: 0,
+		fat: 0,
+		fiber: 0,
+		sugar: 0,
+		saturated: 0,
+		polyunsaturated: 0,
+		monounsaturated: 0,
+		trans: 0,
+		sodium: 0,
+		potassium: 0,
+		vitaminA: 0,
+		vitaminC: 0,
+		calcium: 0,
+		iron: 0,
+	};
+	for (let ingredient of ingredients) {
+		const { dataValues: macros } = await ingredient.getMacro();
+		const { dataValues: micros } = await ingredient.getMicro();
+		const multiplier =
+			ingredient.dataValues.ingredientsForRecipe.dataValues.quantity;
+		ingredient.dataValues.macros = macros;
+		ingredient.dataValues.micros = micros;
+		for (let attr in macros) {
+			total[attr] += +macros[attr] * multiplier;
+		}
+		for (let attr in micros) {
+			total[attr] += +micros[attr] * multiplier;
+		}
+	}
+	// calculate total calories
+	total.calories = total.protein * 4 + total.carbs * 4 + total.fat * 9;
+
+	recipe = recipe.dataValues;
+	let recipeResponse = {
+		name: recipe.name,
+		description: recipe.description,
+		prepTime: recipe.prepTime,
+		cookingTime: recipe.cookingTime,
+		servingSize: recipe.servingSize,
+		likes: recipe.likes,
+		image: recipe.image,
+		id: encryptId(recipe.id),
+	};
+	recipeResponse.steps = steps;
+	recipeResponse.ingredients = ingredients;
+	recipeResponse.total = total;
+	delete recipeResponse.total.id;
+	return recipeResponse;
 };
 
 exports.calculateMacros = async (ingredients) => {
@@ -89,33 +175,6 @@ exports.calculateMacros = async (ingredients) => {
 	// calculate total calories
 	total.calories = total.protein * 4 + total.carbs * 4 + total.fat * 9;
 	return total;
-}
-
-exports.getRecipeById = async (encryptedId) => {
-	const decryptedId = decryptId(encryptedId)[0];
-
-	//get recipe main data
-	let recipe = await recipes.findByPk(decryptedId);
-
-	//get recipe ingredients
-	const ingredients = await recipe.getIngredients();
-
-	//get data for each ingredient and sum macros and micros
-	let total = await this.calculateMacros(ingredients);
-
-	recipe = recipe.dataValues;
-	let recipeResponse = {
-		name: recipe.name,
-		description: recipe.description,
-		prepTime: recipe.prepTime,
-		cookingTime: recipe.cookingTime,
-		servingSize: recipe.servingSize,
-		likes: recipe.likes,
-	};
-	recipeResponse.ingredients = ingredients;
-	recipeResponse.total = total;
-	delete recipeResponse.total.id;
-	return recipeResponse;
 };
 
 exports.addImageToRecipe = async (image, recipeId) => {
@@ -144,15 +203,15 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 
 	if (toDo === "like") {
 		await usersLikes.create({
-			userId: decryptedRecipeId,
-			recipeId: decryptedUserId,
+			userId: decryptedUserId,
+			recipeId: decryptedRecipeId,
 		});
 	}
 	if (toDo === "unlike") {
 		await usersLikes.destroy({
 			where: {
-				userId: decryptedRecipeId,
-				recipeId: decryptedUserId,
+				userId: decryptedUserId,
+				recipeId: decryptedRecipeId,
 			},
 		});
 	}
@@ -166,55 +225,55 @@ exports.searchRecipes = async (searchOptions) => {
 				name: {
 					[Op.iLike]: `%${searchOptions.filter.name}%`,
 				},
-			}
+			};
 		if (searchOptions.filter.description)
 			queryOptions.where = {
 				description: {
 					[Op.iLike]: `%${searchOptions.filter.description}%`,
 				},
-			}
+			};
 		if (searchOptions.filter.prepTime?.start)
 			queryOptions.where = {
 				prepTime: {
 					[Op.gte]: searchOptions.filter.prepTime.start,
 				},
-			}
+			};
 		if (searchOptions.filter.prepTime?.end)
 			queryOptions.where = {
 				prepTime: {
 					[Op.lte]: searchOptions.filter.prepTime.end,
 				},
-			}
+			};
 		if (searchOptions.filter.cookingTime?.start)
 			queryOptions.where = {
 				cookingTime: {
 					[Op.gte]: searchOptions.filter.cookingTime.start,
 				},
-			}
+			};
 		if (searchOptions.filter.cookingTime?.end)
 			queryOptions.where = {
 				cookingTime: {
 					[Op.lte]: searchOptions.filter.cookingTime.end,
 				},
-			}
+			};
 		if (searchOptions.filter.servingSize?.start)
 			queryOptions.where = {
 				servingSize: {
 					[Op.gte]: searchOptions.filter.servingSize.start,
 				},
-			}
+			};
 		if (searchOptions.filter.servingSize?.end)
 			queryOptions.where = {
 				servingSize: {
 					[Op.lte]: searchOptions.filter.servingSize.end,
 				},
-			}
+			};
 		if (searchOptions.filter.author)
 			queryOptions.where = {
 				author: {
 					[Op.iLike]: `%${searchOptions.filter.author}%`,
 				},
-			}
+			};
 	}
 	if (searchOptions.order) {
 		queryOptions.order = searchOptions.order;
@@ -227,15 +286,48 @@ exports.searchRecipes = async (searchOptions) => {
 	}
 
 	queryOptions.include = [{ model: ingredients, include: [macros, micros] }];
-	let recipesList = await recipes.findAll(queryOptions)
-		.then(res => res)
-		.catch(err => {
+	let recipesList = await recipes
+		.findAll(queryOptions)
+		.then((res) => res)
+		.catch((err) => {
 			console.error(err);
 			throw new CustomError("Error while searching recipes", 500);
-		})
+		});
 
 	let recipesResponse = [];
-	for (let recipe of recipesList)
-		recipesResponse.push(recipe.get());
+	for (let recipe of recipesList) recipesResponse.push(recipe.get());
 	return recipesResponse;
-}
+};
+exports.getLiked = async (userId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const recipes = await usersLikes.findAll({
+		attributes: ["recipeId"],
+		where: {
+			userId: decryptedUserId,
+		},
+	});
+	const encryptedRecipes = [];
+	recipes.forEach((recipe) => {
+		encryptedRecipes.push(
+			`${process.env.baseUrl}/api/recipes/${encryptId(
+				recipe.dataValues.recipeId
+			)}`
+		);
+	});
+	return encryptedRecipes;
+};
+
+exports.userLike = async (userId, recipeId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const decryptedRecipeId = decryptId(recipeId)[0];
+
+	const recipes = await usersLikes.findAll({
+		limit: 1,
+		where: {
+			recipeId: decryptedRecipeId,
+			userId: decryptedUserId,
+		},
+	});
+
+	return !!recipes.length;
+};
