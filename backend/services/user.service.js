@@ -1,28 +1,84 @@
 const crypto = require("crypto");
 
-const {
-	decryptId,
-	encryptId,
-	makeLink,
-	CustomError,
-} = require("../middleware/utilities");
+const { CustomError } = require("../middleware/utilities");
 
 const { users } = require("../models/index");
 const { generateRandomString } = require("../middleware/utilities");
-const {
-	sendValidationEmail,
-	sendResetPasswordEmail,
-} = require("../utilities/email.services");
+const { sendValidationEmail, sendResetPasswordEmail, } = require("../utilities/email.services");
 const { getImageLinkById } = require("../utilities/picture.services");
-const base = "/users/";
 
-async function userExists(username) {
-	const usersResponse = await users.findAll({
-		where: {
-			username,
-		},
+exports.addUser = async (user) => {
+	const searchedUser = await this.searchAuthors({
+		username: user.username,
 	});
-	return usersResponse.length !== 0;
+	if (searchedUser) throw new CustomError("User already exists", 409);
+
+	let { password } = user;
+	const salt = crypto.randomBytes(16).toString("base64");
+	const hash = crypto
+		.createHmac("sha512", salt)
+		.update(password)
+		.digest("base64");
+	password = `${salt}$${hash}`;
+
+	return users.create({
+		username: user.username,
+		password,
+		youTube: user?.youTube,
+		instagram: user?.instagram,
+		facebook: user?.facebook,
+		twitter: user?.twitter,
+		tikTok: user?.tikTok,
+		reddit: user?.reddit,
+		salt,
+	})
+		.then(res => {
+			console.log("Added user ", res.get());
+			return res.get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while adding user", 500);
+		})
+};
+
+exports.searchUserById = async (userId) => {
+	const user = await users.findByPk(userId)
+		.then(res => res)
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while searching user by id", 500);
+		})
+	if (!user) {
+		console.log("User with id ", userId, " not found");
+		return null;
+	}
+	console.log("User with id ", userId, " found ", user.get());
+	return user.get();
+}
+
+exports.searchUsers = async (userData) => {
+	const searchedUsers = await users.findAll({
+		where: {
+			...userData,
+		},
+	})
+		.then(res => res)
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while searching users", 500);
+		})
+
+	if (!searchedUsers) {
+		console.log("Users with ", userData, " not found");
+		return null;
+	}
+	console.log("Users with ", userData, " found ");
+
+	let foundUsers = [];
+	for (let searchedUser of searchedUsers)
+		foundUsers.push(searchedUser.get());
+	return foundUsers;
 }
 
 function checkPassword(storedPassword, salt, passwordToBeVerified) {
@@ -33,106 +89,40 @@ function checkPassword(storedPassword, salt, passwordToBeVerified) {
 		.digest("base64");
 	hashedPassword = `${salt}$${hash}`;
 	if (storedPassword !== hashedPassword) {
+		console.log("Passwords do not match");
 		throw new CustomError("Incorrect credentials!", 401);
 	}
 }
 
-exports.addUser = async (user) => {
-	if (await userExists(user.username))
-		throw new CustomError("Username already used😞", 409);
-	let { password } = user;
-	const salt = crypto.randomBytes(16).toString("base64");
-	const hash = crypto
-		.createHmac("sha512", salt)
-		.update(password)
-		.digest("base64");
-	password = `${salt}$${hash}`;
-	const addedUser = await users.create({
-		username: user.username,
-		password,
-		youTube: user?.youTube,
-		instagram: user?.instagram,
-		facebook: user?.facebook,
-		twitter: user?.twitter,
-		tikTok: user?.tikTok,
-		reddit: user?.reddit,
-		salt,
-	});
-	return makeLink(base, addedUser.dataValues.id.toString());
-};
-
-exports.getUserByUID = async (encryptedId) => {
-	const decryptedId = decryptId(encryptedId)[0];
-	let user = await users.findByPk(decryptedId);
-	if (!user) throw new CustomError("User does not exist", 404);
-	else user = user.dataValues;
-	delete user.password;
-	delete user.id;
-	delete user.salt;
+exports.getUserById = async (userId) => {
+	let user = await this.searchUserById(userId);
+	if (!user) throw new CustomError("User not found", 404);
 	user.profilePicture = getImageLinkById("profile", user.profilePicture);
 	return user;
 };
 
-exports.getFullUserByUID = async (encryptedId) => {
-	const decryptedId = decryptId(encryptedId)[0];
-	let user = await users.findByPk(decryptedId);
-	if (!user) throw new CustomError("User does not exist", 404);
-	else user = user.dataValues;
-	return {
-		id: user.id,
-		username: user.username,
-		password: user.password,
-		youTube: user.youTube,
-		instagram: user.instagram,
-		facebook: user.facebook,
-		twitter: user.twitter,
-		tikTok: user.tikTok,
-		reddit: user.reddit,
-		createdAt: user.createdAt,
-		updatedAt: user.updatedAt,
-		salt: user.salt,
-	};
-};
-
 exports.getUserByUsernameAndPassword = async (username, password) => {
-	let user = await users.findAll({
-		where: {
-			username,
-		},
+	let user = await this.searchAuthors({
+		username: username,
 	});
-	if (user.length === 0) throw new CustomError("Invalid credentials!", 401);
-	else user = user[0].dataValues;
+	if (!user) throw new CustomError("Invalid credentials!", 401);
+	else user = user[0].get();
 	const { salt } = user;
 	checkPassword(user.password, salt, password);
-	return makeLink(base, user.id.toString());
-};
-
-exports.getUserByUsernameAndPasswordAllData = async (username, password) => {
-	let user = await users.findAll({
-		where: {
-			username,
-		},
-	});
-	if (user.length === 0) throw new CustomError("🍌Invalid credentials!🍌", 401);
-	else user = user[0].dataValues;
-	const { salt } = user;
-	checkPassword(user.password, salt, password);
-	user.url = makeLink(base, user.id.toString());
+	console.log("User with username ", username, " and correct password found");
 	return user;
 };
 
-exports.updateUser = async (id, user) => {
-	const oldUser = await this.getFullUserByUID(id);
+exports.updateUserById = async (userId, newUser, password) => {
+	const oldUser = await this.getUserById(userId);
 	const { salt } = oldUser;
 
-	if (user.oldPassword) {
-		checkPassword(oldUser.password, salt, user.oldPassword);
-	}
+	checkPassword(oldUser.password, salt, password);
 
 	let newPassword;
 	let newSalt;
-	if (user.newPassword) {
-		newPassword = user.newPassword;
+	if (newUser.newPassword) {
+		newPassword = newUser.newPassword;
 		newSalt = crypto.randomBytes(16).toString("base64");
 		const newHash = crypto
 			.createHmac("sha512", newSalt)
@@ -141,28 +131,35 @@ exports.updateUser = async (id, user) => {
 		newPassword = `${newSalt}$${newHash}`;
 	}
 
-	await users.update(
+	return users.update(
 		{
-			password: user?.newPassword ? newPassword : oldUser.password,
-			youTube: user.youTube || oldUser.youTube,
-			instagram: user.instagram || oldUser.instagram,
-			facebook: user.facebook || oldUser.facebook,
-			twitter: user.twitter || oldUser.twitter,
-			tikTok: user.tikTok || oldUser.tikTok,
-			reddit: user.reddit || oldUser.reddit,
-			salt: user?.newPassword ? newSalt : oldUser.salt,
+			password: newUser?.newPassword ? newPassword : oldUser.password,
+			youTube: newUser.youTube || oldUser.youTube,
+			instagram: newUser.instagram || oldUser.instagram,
+			facebook: newUser.facebook || oldUser.facebook,
+			twitter: newUser.twitter || oldUser.twitter,
+			tikTok: newUser.tikTok || oldUser.tikTok,
+			reddit: newUser.reddit || oldUser.reddit,
+			salt: newUser?.newPassword ? newSalt : oldUser.salt,
 			resetPasswordToken:
-				user?.resetPasswordToken || oldUser.resetPasswordToken,
+				newUser?.resetPasswordToken || oldUser.resetPasswordToken,
 		},
 		{
 			where: { id: oldUser.id },
-		}
-	);
-	return makeLink(base, oldUser.id.toString());
+			returning: true,
+		},
+	)
+		.then(res => {
+			console.log("Updated user ", res[1][0].get());
+			return res[1][0].get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while updating user", 500);
+		})
 };
 
-exports.updateUser2 = async (encryptedId, user) => {
-	const id = decryptId(encryptedId)[0];
+exports.updateUser2 = async (userId, user) => {
 	delete user.password;
 	delete user.username;
 	delete user.id;
@@ -174,33 +171,50 @@ exports.updateUser2 = async (encryptedId, user) => {
 		const randomString = generateRandomString(100);
 		sendValidationEmail(
 			user.email,
-			`${process.env.baseUrl}/api/users/confirm-email/${randomString}`
+			`${process.env.baseUrl}/api/users/confirm-email/${randomString}`,
 		);
 		user.emailConfirmationCode = randomString;
 		user.emailConfirmed = false;
 	}
 
-	await users.update(
+	return users.update(
 		{
 			...user,
 		},
 		{
-			where: { id },
-		}
-	);
-	return makeLink(base, id);
+			where: { id: userId },
+			returning: true,
+		},
+	)
+		.then(res => {
+			console.log("Updated user ", res[1][0].get());
+			return res[1][0].get();
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while updating user", 500);
+		})
 };
 
-exports.deleteUser = async (id, password) => {
-	const oldUser = await this.getFullUserByUID(id);
+exports.deleteUserByIdAndPassword = async (userId, password) => {
+	const oldUser = await this.getUserById(userId);
 	const { salt } = oldUser;
 
 	checkPassword(oldUser.password, salt, password);
 
-	await users.destroy({
-		where: { id: oldUser.id },
-	});
+	return users.destroy({
+		where: { id: userId },
+	})
+		.then(res => {
+			console.log("Deleted user with id ", userId);
+			return res;
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while deleting user", 500);
+		})
 };
+
 exports.verifyEmail = async (emailConfirmationCode) => {
 	if (emailConfirmationCode.length < 10)
 		throw new CustomError("Seems suspicious, so not allowed!", 401);
@@ -209,13 +223,16 @@ exports.verifyEmail = async (emailConfirmationCode) => {
 			emailConfirmed: true,
 			emailConfirmationCode: null,
 		},
-		{ where: { emailConfirmationCode }, returning: true }
+		{
+			where: { emailConfirmationCode },
+			returning: true,
+		},
 	);
 	if (response[0] !== 1) return false;
-	return response[1][0].dataValues;
+	return response[1][0].get();
 };
+
 exports.updateUserProfilePicture = async (req, userId) => {
-	const id = decryptId(userId)[0];
 	const pictureLink = getImageLinkById("profile", req.addedPicture);
 	await users.update(
 		{
@@ -225,7 +242,7 @@ exports.updateUserProfilePicture = async (req, userId) => {
 			where: {
 				id,
 			},
-		}
+		},
 	);
 	return pictureLink;
 };
@@ -242,16 +259,17 @@ exports.resetPassword = async (email) => {
 				email,
 				emailConfirmed: 1,
 			},
-		}
+		},
 	);
 	if (response[0]) {
 		sendResetPasswordEmail(
 			email,
-			`${process.env.fontEndBaseUrl}/change-password/${token}`
+			`${process.env.fontEndBaseUrl}/change-password/${token}`,
 		);
 	}
 	return true;
 };
+
 exports.changePassword = async (password, token) => {
 	const user = { newPassword: password };
 	const response = await users.update(
@@ -263,14 +281,14 @@ exports.changePassword = async (password, token) => {
 				resetPasswordToken: token,
 			},
 			returning: true,
-		}
+		},
 	);
 	if (response[0] === 0)
 		throw new CustomError("This token is incorrect or already used!", 403);
 
 	const { id, username } = response[1][0].dataValues;
 
-	await this.updateUser(encryptId(id), user);
+	await this.updateUser(id, user);
 
 	return { success: true, username };
 };

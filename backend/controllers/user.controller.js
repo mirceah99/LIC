@@ -3,6 +3,9 @@ const {
 	generateSuccessEmailTemplate,
 	generateFailedConfirmEmailTemplate,
 } = require("../templates/templates");
+const { makeLink, decryptId } = require("../middleware/utilities");
+
+const base = "/users/";
 
 exports.addUser = async (req, res) => {
 	try {
@@ -11,28 +14,42 @@ exports.addUser = async (req, res) => {
 				message: "Body should contain username and password!",
 			});
 		}
+
 		if (req.body.username.search("@") !== -1) {
 			return res.status(400).json({
 				message: "️Username can't contain @!",
 			});
 		}
 
-		const userLink = await UserService.addUser(req.body);
-		return res
-			.status(200)
-			.json({ data: userLink, message: "Successful registration!" });
+		const addedUser = await UserService.addUser(req.body);
+		const addUserResponse = makeLink(base, addedUser.id);
+
+		return res.status(200).json({
+			data: addUserResponse,
+			message: "Successful registration!",
+		});
 	} catch (e) {
-		console.log(e);
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
 
-exports.getUserByUID = async (req, res) => {
+exports.getUserById = async (req, res) => {
 	try {
-		const user = await UserService.getUserByUID(req.params.id);
-		return res
-			.status(200)
-			.json({ data: user, message: "User successfully retrieved" });
+		req.params.id = decryptId(req.params.id)[0];
+
+		if (!req.params.id)
+			return res.status(404).json({
+				message: "User not found",
+			});
+
+		let getUserByIdResponse = await UserService.getUserById(req.params.id);
+		delete getUserByIdResponse.password;
+		delete getUserByIdResponse.id;
+		delete getUserByIdResponse.salt;
+
+		return res.status(200).json({
+			data: getUserByIdResponse, message: "User successfully retrieved",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -46,13 +63,33 @@ exports.getUserByUsernameAndPassword = async (req, res) => {
 			});
 		}
 
-		const userLink = await UserService.getUserByUsernameAndPassword(
+		const user = await UserService.getUserByUsernameAndPassword(
 			req.body.username,
-			req.body.password
+			req.body.password,
 		);
-		return res
-			.status(200)
-			.json({ data: userLink, message: "User successfully retrieved" });
+		const getUserByUsernameAndPasswordResponse = makeLink(base, user.id);
+
+		return res.status(200).json({
+			data: getUserByUsernameAndPasswordResponse,
+			message: "User successfully retrieved",
+		});
+	} catch (e) {
+		return res.status(e.statusCode || 500).json({ message: e.message });
+	}
+};
+
+exports.searchUsers = async (req, res) => {
+	try {
+
+		const searchedUsers = await UserService.searchUsers(req.body);
+		let searchedUsersResponse = [];
+		for (let searchedUser of searchedUsers)
+			searchedUsersResponse.push(makeLink(base, searchedUser.id));
+
+		return res.status(200).json({
+			data: searchedUsersResponse,
+			message: "Authors successfully retrieved",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -107,9 +144,10 @@ exports.updateUser = async (req, res) => {
 		}
 
 		const userLink = await UserService.updateUser2(req.params.id, req.body);
-		return res
-			.status(200)
-			.json({ data: userLink, message: "User successfully updated" });
+		return res.status(200).json({
+			data: userLink,
+			message: "User successfully updated",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -123,27 +161,32 @@ exports.deleteUser = async (req, res) => {
 			});
 		}
 
-		await UserService.deleteUser(req.params.id, req.body.password);
-		return res.status(200).json({ message: "User successfully deleted" });
+		req.params.id = decryptId(req.params.id)[0];
+
+		if (!req.params.id)
+			return res.status(404).json({
+				message: "User not found",
+			});
+
+		await UserService.deleteUserByIdAndPassword(req.params.id, req.body.password);
+
+		return res.status(200).json({
+			message: "User successfully deleted",
+		});
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
 };
+
 exports.verifyEmail = async (req, res) => {
 	try {
 		const updatedUser = await UserService.verifyEmail(req.params.code);
 		if (updatedUser) {
-			return res
-				.status(200)
-				.setHeader("Content-Type", "text/html")
-				.send(
-					generateSuccessEmailTemplate(updatedUser.email, updatedUser.username)
+			return res.status(200).setHeader("Content-Type", "text/html").send(
+					generateSuccessEmailTemplate(updatedUser.email, updatedUser.username),
 				);
 		} else
-			return res
-				.status(400)
-				.setHeader("Content-Type", "text/html")
-				.send(generateFailedConfirmEmailTemplate());
+			return res.status(400).setHeader("Content-Type", "text/html").send(generateFailedConfirmEmailTemplate());
 	} catch (e) {
 		return res.status(e.statusCode || 500).json({ message: e.message });
 	}
@@ -164,7 +207,7 @@ exports.updateUserProfilePicture = async (req, res) => {
 		}
 		const pictureLink = await UserService.updateUserProfilePicture(
 			req,
-			req.params.id
+			req.params.id,
 		);
 		return res.status(200).json({
 			pictureLink: pictureLink,
@@ -212,7 +255,7 @@ exports.changePassword = async (req, res) => {
 		}
 		const response = await UserService.changePassword(
 			req.body.password,
-			req.body.token
+			req.body.token,
 		);
 		return res.status(200).json({
 			username: response.username,

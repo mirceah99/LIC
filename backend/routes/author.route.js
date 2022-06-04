@@ -6,10 +6,12 @@ const AuthorController = require('../controllers/author.controller');
 
 router.post('/', AuthorController.addAuthor);
 
-router.get('/:id', AuthorController.getAuthorByUID);
+router.get('/:id', AuthorController.getAuthorById);
 
-router.put('/:id', AuthorController.updateAuthorByUID);
+router.get('/', AuthorController.searchAuthors);
 
-router.delete('/:id', AuthorController.deleteAuthorByUID);
+router.put('/:id', AuthorController.updateAuthorById);
+
+router.delete('/:id', AuthorController.deleteAuthorById);
 
 module.exports = router;
