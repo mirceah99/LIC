@@ -89,4 +89,7 @@ db.usersLikes = sequelize.models.usersLikes;
 db.recipes.belongsToMany(db.ingredients, { through: db.ingredientsForRecipe });
 db.ingredients.belongsToMany(db.recipes, { through: db.ingredientsForRecipe });
 
+db.recipes.belongsToMany(db.tags, { through: db.tagsForRecipe });
+db.tags.belongsToMany(db.recipes, { through: db.tagsForRecipe });
+
 module.exports = db;

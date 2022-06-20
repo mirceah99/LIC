@@ -9,6 +9,7 @@ const {
 } = require("../models/index");
 const MacroService = require("./macros.service");
 const MicroService = require("./micros.service");
+const RecipeService = require("./recipe.service");
 const { getImageLinkById } = require("../utilities/picture.services");
 const base = "/ingredients/";
 
@@ -44,6 +45,48 @@ exports.getIngredientByUID = async (encryptedId) => {
 		micros,
 		image: ingredient.image,
 	};
+};
+
+exports.getFullIngredientByUID = async (encryptedId) => {
+	const decryptedId = decryptId(encryptedId)[0];
+	const ingredient = (await ingredients.findByPk(decryptedId)).dataValues;
+	if (!ingredient || !decryptedId)
+		throw new CustomError("Ingredient does not exist", 404);
+	return ingredient;
+};
+
+exports.getIngredientById = async (id) => {
+	const ingredient = (await ingredients.findByPk(id)).dataValues;
+	if (!ingredient || !id)
+		throw new CustomError("Ingredient does not exist", 404);
+	const macros = await MacroService.getMacro(ingredient.macros);
+	const micros = await MicroService.getMicro(ingredient.micros);
+	return {
+		name: ingredient.name,
+		macros,
+		micros,
+		image: ingredient.image,
+	};
+};
+
+exports.getIngredientsByRecipeId = async (recipeId) => {
+	let ingredients = [];
+	return ingredientsForRecipe.findAll({
+		where: {
+			recipeId: recipeId,
+		},
+	})
+		.then(async res => {
+			for (let ingredientForRecipe of res) {
+				let ingredient = await this.getIngredientById(ingredientForRecipe.ingredientId);
+				ingredients.push(ingredient);
+			}
+			return ingredients;
+		})
+		.catch(err => {
+			console.error(err);
+			throw new CustomError("Error while getting ingredients by recipe", 500);
+		})
 };
 
 exports.getIngredientByName = async (name) => {
@@ -106,7 +149,7 @@ exports.addIngredientUnit = async (ingredientUnit, encryptedIngredientId) => {
 	if (
 		await ingredientUnitExists(
 			decryptedIngredientForRecipeId,
-			ingredientUnit.unitOfMeasurement
+			ingredientUnit.unitOfMeasurement,
 		)
 	)
 		throw new CustomError("Ingredient Unit already exists", 409);
@@ -138,7 +181,7 @@ exports.linkIngredientToRecipe = (ingredientForRecipe, recipeId) => {
 		optionality: ingredientForRecipe.optionality || false,
 	})
 		.then(res => {
-			console.log("Linked ingredient with id ",ingredientForRecipe.id," to recipe with id ",recipeId);
+			console.log("Linked ingredient with id ", ingredientForRecipe.id, " to recipe with id ", recipeId);
 			return res.get();
 		})
 		.catch(err => {
@@ -149,11 +192,13 @@ exports.linkIngredientToRecipe = (ingredientForRecipe, recipeId) => {
 
 exports.updateIngredientByUID = async (encryptedId, newIngredient) => {
 	const decryptedId = decryptId(encryptedId)[0];
-	let ingredient = this.getIngredientById(encryptedId);
+	let ingredient = await this.getFullIngredientByUID(encryptedId);
 	if (!ingredient || !decryptedId)
 		throw new CustomError("Ingredient does not exist", 404);
-	await MacroService.updateMacro(newIngredient.macros);
-	await MicroService.updateMicro(newIngredient.micros);
+	console.log("UPDATEZ MACRO cu",newIngredient.macros);
+	await MacroService.updateMacro(ingredient.macros, newIngredient.macros);
+	await MicroService.updateMicro(ingredient.micros, newIngredient.micros);
+	await RecipeService.updateTotalsOfRecipeByIngredientId(decryptedId);
 	await ingredients.update(
 		{
 			link: newIngredient.link || ingredient.link,
