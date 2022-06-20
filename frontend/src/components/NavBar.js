@@ -17,7 +17,7 @@ const NavBar = () => {
 			<img
 				src={SearchSvg}
 				onClick={() => {
-					navigation("/search-settings");
+					navigation("/search");
 				}}
 				alt="search"
 			/>

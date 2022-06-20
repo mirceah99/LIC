@@ -1,6 +1,5 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
-import classes from "./IngredientsSearch.module.css";
 import LoadingDots from "./LoadingDots";
 import Input from "./UI/Input";
 import useHttp from "../hooks/use-http";
