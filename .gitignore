@@ -8,7 +8,7 @@
 /frontend/.pnp.js
 /frontend/package-lock.json
 /backend/package-lock.json
-
+/scripts/node_modules
 #images 
 /backend/public-static/images/profile
 /backend/public-static/images  
