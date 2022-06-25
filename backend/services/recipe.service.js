@@ -149,7 +149,7 @@ exports.getRecipeById = async (encryptedId) => {
 		image: recipe.image,
 		id: encryptId(recipe.id),
 	};
-	recipeResponse.steps = steps;
+	// recipeResponse.steps = steps; //TODO FIX THIS STEPS THING
 	recipeResponse.ingredients = ingredients;
 	recipeResponse.total = total;
 	delete recipeResponse.total.id;
