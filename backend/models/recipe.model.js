@@ -45,6 +45,24 @@ module.exports = (sequelize, DataTypes) => {
 			totalFiber: {
 				type: DataTypes.FLOAT,
 			},
+			totalSodium: {
+				type: DataTypes.FLOAT,
+			},
+			totalPotassium: {
+				type: DataTypes.FLOAT,
+			},
+			totalVitaminA: {
+				type: DataTypes.FLOAT,
+			},
+			totalVitaminC: {
+				type: DataTypes.FLOAT,
+			},
+			totalCalcium: {
+				type: DataTypes.FLOAT,
+			},
+			totalIron: {
+				type: DataTypes.FLOAT,
+			},
 		},
 		{ timestamps: false }
 	);

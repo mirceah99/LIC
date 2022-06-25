@@ -273,6 +273,12 @@ exports.updateTotalsOfRecipeById = async (recipeId) => {
 		totalCarbs: 0,
 		totalFat: 0,
 		totalFiber: 0,
+		totalSodium: 0,
+		totalPotassium: 0,
+		totalVitaminA: 0,
+		totalVitaminC: 0,
+		totalCalcium: 0,
+		totalIron: 0,
 	};
 	for (let ingredientForRecipe of ingredients) {
 		let ingredient = await IngredientService.getIngredientById(
@@ -282,6 +288,12 @@ exports.updateTotalsOfRecipeById = async (recipeId) => {
 		totals.totalCarbs += ingredient.macros.carbs;
 		totals.totalFat += ingredient.macros.fat;
 		totals.totalFiber += ingredient.macros.fiber;
+		totals.totalSodium += ingredient.micros.sodium;
+		totals.totalPotassium += ingredient.micros.potassium;
+		totals.totalVitaminA += ingredient.micros.vitaminA;
+		totals.totalVitaminC += ingredient.micros.vitaminC;
+		totals.totalCalcium += ingredient.micros.calcium;
+		totals.totalIron += ingredient.micros.iron;
 	}
 
 	let recipe = (await recipes.findByPk(recipeId)).get();
@@ -290,6 +302,13 @@ exports.updateTotalsOfRecipeById = async (recipeId) => {
 	totals.totalCarbs = totals.totalCarbs * recipe.servingSize;
 	totals.totalFat = totals.totalFat * recipe.servingSize;
 	totals.totalFiber = totals.totalFiber * recipe.servingSize;
+	totals.totalSodium = totals.totalSodium * recipe.servingSize;
+	totals.totalPotassium = totals.totalPotassium * recipe.servingSize;
+	totals.totalVitaminA = totals.totalVitaminA * recipe.servingSize;
+	totals.totalVitaminC = totals.totalVitaminC * recipe.servingSize;
+	totals.totalCalcium = totals.totalCalcium * recipe.servingSize;
+	totals.totalIron = totals.totalIron * recipe.servingSize;
+
 	totals.totalCalories =
 		totals.totalProtein * 4 + totals.totalCarbs * 4 + totals.totalFat * 9;
 
@@ -457,10 +476,76 @@ exports.searchRecipes = async (searchOptions) => {
 					[Op.gte]: searchOptions.filter.fiber.start,
 				},
 			};
-		if (searchOptions.filter.fiber?.end)
+		if (searchOptions.filter.sodium?.start)
 			queryOptions.where = {
-				totalFiber: {
-					[Op.lte]: searchOptions.filter.fiber.end,
+				totalSodium: {
+					[Op.lte]: searchOptions.filter.sodium.start,
+				},
+			};
+		if (searchOptions.filter.sodium?.end)
+			queryOptions.where = {
+				totalSodium: {
+					[Op.lte]: searchOptions.filter.sodium.end,
+				},
+			};
+		if (searchOptions.filter.potassium?.start)
+			queryOptions.where = {
+				totalPotassium: {
+					[Op.lte]: searchOptions.filter.potassium.start,
+				},
+			};
+		if (searchOptions.filter.potassium?.end)
+			queryOptions.where = {
+				totalPotassium: {
+					[Op.lte]: searchOptions.filter.potassium.end,
+				},
+			};
+		if (searchOptions.filter.vitaminA?.start)
+			queryOptions.where = {
+				totalVitaminA: {
+					[Op.lte]: searchOptions.filter.vitaminA.start,
+				},
+			};
+		if (searchOptions.filter.vitaminA?.end)
+			queryOptions.where = {
+				totalVitaminA: {
+					[Op.lte]: searchOptions.filter.vitaminA.end,
+				},
+			};
+		if (searchOptions.filter.vitaminC?.start)
+			queryOptions.where = {
+				totalVitaminC: {
+					[Op.lte]: searchOptions.filter.vitaminC.start,
+				},
+			};
+		if (searchOptions.filter.vitaminC?.end)
+			queryOptions.where = {
+				totalVitaminC: {
+					[Op.lte]: searchOptions.filter.vitaminC.end,
+				},
+			};
+		if (searchOptions.filter.calcium?.start)
+			queryOptions.where = {
+				totalCalcium: {
+					[Op.lte]: searchOptions.filter.calcium.start,
+				},
+			};
+		if (searchOptions.filter.calcium?.end)
+			queryOptions.where = {
+				totalCalcium: {
+					[Op.lte]: searchOptions.filter.calcium.end,
+				},
+			};
+		if (searchOptions.filter.iron?.start)
+			queryOptions.where = {
+				totalIron: {
+					[Op.lte]: searchOptions.filter.iron.start,
+				},
+			};
+		if (searchOptions.filter.iron?.end)
+			queryOptions.where = {
+				totalIron: {
+					[Op.lte]: searchOptions.filter.iron.end,
 				},
 			};
 		if (searchOptions.filter.likes?.start)
@@ -518,6 +603,12 @@ exports.searchRecipes = async (searchOptions) => {
 		"totalCarbs",
 		"totalFat",
 		"totalFiber",
+		"totalSodium",
+		"totalPotassium",
+		"totalVitaminA",
+		"totalVitaminC",
+		"totalCalcium",
+		"totalIron",
 	];
 
 	let recipesList = await recipes
@@ -535,7 +626,7 @@ exports.searchRecipes = async (searchOptions) => {
 			let hasAllOfTags = true;
 			for (let filterTag of searchOptions.filter.allOfTags)
 				if (!tags.includes(filterTag)) hasAllOfTags = false;
-			if(!hasAllOfTags) continue;
+			if (!hasAllOfTags) continue;
 		}
 		recipesResponse.push(recipe.get());
 	}
