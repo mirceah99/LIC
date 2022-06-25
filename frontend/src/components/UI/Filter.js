@@ -16,6 +16,7 @@ import FormControl from "@mui/material/FormControl";
 import Input from "./Input";
 import useHttp from "../../hooks/use-http";
 import Meal from "../Meal";
+import displayInfoHelper from "../../helpers/displayInfo";
 const Filter = (props) => {
 	const range = { min: 0, max: 120 };
 	const [protein, setProtein] = useState([range.min, range.max]);
@@ -33,6 +34,9 @@ const Filter = (props) => {
 	const [orderBy, setOrderBy] = useState("");
 	const [searchName, setSearchName] = useState("");
 	const [foundRecipes, setFoundRecipes] = useState(null);
+	const [displayInfo, steDisplayInfo] = useState(
+		displayInfoHelper.getDisplayInfo()
+	);
 	const { sendRequest } = useHttp();
 	const clearAllHandler = () => {
 		setProtein([range.min, range.max]);
@@ -49,8 +53,11 @@ const Filter = (props) => {
 		setIron([0, 60]);
 		setOrderBy("");
 		setSearchName("");
+		steDisplayInfo(displayInfoHelper.getAllFalse());
 	};
 	function fetchIngredients() {
+		// set display info
+		displayInfoHelper.setDisplayInfo(displayInfo);
 		const requestConfig = {
 			path: `/recipes/search`,
 			method: "POST",
@@ -268,51 +275,173 @@ const Filter = (props) => {
 						<AccordionDetails>
 							<div className={classes["display-info"]}>
 								<div>
-									<p>{`Protein 🥩`}</p> <Checkbox />
+									<p>{`Protein 🥩`}</p>{" "}
+									<Checkbox
+										checked={displayInfo.protein}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.protein = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Fat 🥑`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.fat}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.fat = checked;
+												return newState;
+											});
+										}}
+									/>
+								</div>
+								<div>
+									<p>{`Carbs 🍞`}</p>
+									<Checkbox
+										checked={displayInfo.carbs}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.carbs = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Calories 🔥`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.calories}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.calories = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Price 💵:`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.price}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.price = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Time ⏱`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.time}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.time = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Sodium 🧂`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.sodium}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.sodium = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Potassium 🍌`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.potassium}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.potassium = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`VitaminA 🥕`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.vitaminA}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.vitaminA = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`VitaminC 🍊`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.vitaminC}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.vitaminC = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Calcium 🥛`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.calcium}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.calcium = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Iron ⚓`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.iron}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.iron = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 								<div>
 									<p>{`Likes ❤️`}</p>
-									<Checkbox />
+									<Checkbox
+										checked={displayInfo.like}
+										onChange={(event, checked) => {
+											steDisplayInfo((prevState) => {
+												const newState = { ...prevState };
+												newState.like = checked;
+												return newState;
+											});
+										}}
+									/>
 								</div>
 							</div>
 						</AccordionDetails>
