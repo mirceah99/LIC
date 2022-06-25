@@ -462,6 +462,18 @@ exports.searchRecipes = async (searchOptions) => {
 					[Op.lte]: searchOptions.filter.fiber.end,
 				},
 			};
+		if (searchOptions.filter.likes?.start)
+			queryOptions.where = {
+				likes: {
+					[Op.gte]: searchOptions.filter.likes.start,
+				},
+			};
+		if (searchOptions.filter.likes?.end)
+			queryOptions.where = {
+				likes: {
+					[Op.lte]: searchOptions.filter.likes.end,
+				},
+			};
 		if (searchOptions.filter.author)
 			queryOptions.where = {
 				author: {
