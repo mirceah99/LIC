@@ -1179,6 +1179,72 @@ paths:
                           type: number
                           format: integer
                           example: 20
+                    sodium:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    potassium:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    vitaminA:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    vitaminC:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    calcium:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    iron:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
                     likes:
                       type: object
                       properties:
