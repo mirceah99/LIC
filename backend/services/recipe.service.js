@@ -521,3 +521,37 @@ exports.searchRecipes = async (searchOptions) => {
 	for (let recipe of recipesList) recipesResponse.push(recipe.get());
 	return recipesResponse;
 };
+
+exports.getLiked = async (userId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const recipes = await usersLikes.findAll({
+		attributes: ["recipeId"],
+		where: {
+			userId: decryptedUserId,
+		},
+	});
+	const encryptedRecipes = [];
+	recipes.forEach((recipe) => {
+		encryptedRecipes.push(
+			`${process.env.baseUrl}/api/recipes/${encryptId(
+				recipe.dataValues.recipeId
+			)}`
+		);
+	});
+	return encryptedRecipes;
+};
+
+exports.userLike = async (userId, recipeId) => {
+	const decryptedUserId = decryptId(userId)[0];
+	const decryptedRecipeId = decryptId(recipeId)[0];
+
+	const recipes = await usersLikes.findAll({
+		limit: 1,
+		where: {
+			recipeId: decryptedRecipeId,
+			userId: decryptedUserId,
+		},
+	});
+
+	return !!recipes.length;
+};
