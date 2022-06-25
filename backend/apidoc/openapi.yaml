@@ -12,6 +12,8 @@ tags:
     description: Handles Ingredient operations
   - name: ingredient-units
     description: Handles Ingredient Unit operations
+  - name: recipes
+    description: Handles Recipe operations
   - name: tags
     description: Handles Tag operations
   - name: users
@@ -933,6 +935,693 @@ paths:
                   message:
                     type: string
                     example: "Ingredient Unit does not exist"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /recipes:
+    post:
+      tags:
+        - recipes
+      summary: Add Recipe
+      description: Adds a recipe
+      operationId: addRecipe
+      requestBody:
+        description: A Recipe Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Potato fries"
+                description:
+                  type: string
+                  format: uri
+                  example: "Fried potatoes"
+                prepTime:
+                  type: number
+                  format: integer
+                  example: 10
+                cookingTime:
+                  type: number
+                  format: integer
+                  example: 10
+                servingSize:
+                  type: number
+                  format: integer
+                  example: 3
+                ingredients:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "3PXW8J1QGkl5gnjOaKvw"
+                      quantity:
+                        type: number
+                        format: float
+                        example: 200
+                      unitOfMeasurement:
+                        type: string
+                        example: "g"
+                      optionality:
+                        type: boolean
+                        example: true
+                        required: false
+                        default: false
+                instructions:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "PEEL THE POTATOES"
+                    - "POUR OIL"
+                    - "COOK"
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - Quick food
+                    - Easy
+                author:
+                  type: string
+                  example: "3EMS8J1QGkl5gnjOaKvw"
+              required:
+                - name
+                - description
+                - prepTime
+                - cookingTime
+                - servingSize
+                - ingredients
+                - instructions
+      responses:
+        "200":
+          description: OK. Recipe succesfully added to database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "ttp://localhost:8080/api/recipes/3PXW8J1QGkl5gnjOaKvw"
+                  message:
+                    type: string
+                    example: "Recipe successfully added to database"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should firstly contain name and description!"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ingredient 1 not found"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /recipes/search:
+    post:
+      tags:
+        - recipes
+      summary: Search Recipes
+      description: Search recipes using filters. Any of the body parameters can be omitted
+      operationId: searchRecipes
+      requestBody:
+        description: Search Recipe Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: LAPTE
+                    description: 
+                      type: string
+                      example: LAPTE
+                    prepTime:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 0
+                        end:
+                          type: number
+                          format: integer
+                          example: 5
+                    cookingTime:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 0
+                        end:
+                          type: number
+                          format: integer
+                          example: 5
+                    servingSize:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 0
+                        end:
+                          type: number
+                          format: integer
+                          example: 5
+                    calories:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 500
+                        end:
+                          type: number
+                          format: integer
+                          example: 1000
+                    protein:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    carbs:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    fat:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    fiber:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    likes:
+                      type: object
+                      properties:
+                        start:
+                          type: number
+                          format: integer
+                          example: 10
+                        end:
+                          type: number
+                          format: integer
+                          example: 20
+                    author:
+                      type: string
+                      example: Mircea
+                    anyOfTags:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - SWEET
+                        - QUICK FOOD
+                    allOfTags:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - SWEET
+                        - QUICK FOOD
+                    order:
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          type: string
+                        example: 
+                          - name
+                          - DESC
+                    limit: 
+                      type: number
+                      format: integer
+                      example: 10
+                    offset:
+                      type: number
+                      format: integer
+                      example: 10
+  /recipes/{recipeUID}/instruction:
+    post:
+      tags:
+        - recipes
+      summary: Add Instruction to Recipe
+      description: Adds an instruction to a recipe
+      operationId: addInstructionToRecipe
+      parameters:
+        - in: path
+          name: recipeUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Recipe
+      requestBody:
+        description: An Instruction Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "Clean the potatoes"
+                step:
+                  type: number
+                  format: integer
+                  example: "Fried potatoes"
+              required:
+                - description
+                - step
+      responses:
+        "200":
+          description: OK. Instruction successfully added to recipe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: "http://localhost:8080/api/instructions/3PXW8J1QGkQlZgnjOaKv"
+                  message:
+                    type: string
+                    example: "Instruction successfully added to recipe"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain description and step!"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /recipes/{recipeUID}/ingredient:
+    post:
+      tags:
+        - recipes
+      summary: Link Ingredient to Recipe
+      description: Links an ingredient to a recipe
+      operationId: linkIngredientToRecipe
+      parameters:
+        - in: path
+          name: recipeUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Recipe
+      requestBody:
+        description: An Ingredient For Recipe Object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "3PXW8J1QGkl5gnjOaKvw"
+                quantity:
+                  type: number
+                  format: float
+                  example: 200
+                unitOfMeasurement:
+                  type: string
+                  example: "g"
+                  required: false
+                  default: "g"
+                optionality:
+                  type: boolean
+                  example: true
+                  required: false
+                  default: false
+      responses:
+        "200":
+          description: OK. Ingredient successfully linked to recipe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Instruction successfully added to recipe"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain ingredient id!"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /recipes/{recipeUID}/ustensil:
+    post:
+      tags:
+        - recipes
+      summary: Link Ustensil to Recipe
+      description: Links an ustensil to a recipe
+      operationId: linkUstensilToRecipe
+      parameters:
+        - in: path
+          name: recipeUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Recipe
+      requestBody:
+        description: An Ustensil Id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "3PXW8J1QGkl5gnjOaKvw"
+      responses:
+        "200":
+          description: OK. Ustensil successfully linked to recipe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Instruction successfully added to recipe"
+        "400":
+          description: Bad Request. Incomplete Request Body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Body should contain ustensil id!"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+  /recipe/{recipeUID}:
+    get:
+      tags:
+        - recipes
+      summary: Get Recipe By UID
+      description: Gets a Recipe By UID
+      operationId: getRecipeByUID
+      parameters:
+        - in: path
+          name: recipeUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the recipe
+      responses:
+        "200":
+          description: OK. Recipe succesfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Potato fries"
+                      description:
+                        type: string
+                        format: uri
+                        example: "Fried potatoes"
+                      prepTime:
+                        type: number
+                        format: integer
+                        example: 10
+                      cookingTime:
+                        type: number
+                        format: integer
+                        example: 10
+                      servingSize:
+                        type: number
+                        format: integer
+                        example: 3
+                      likes:
+                        type: number
+                        format: integer
+                        example: 5
+                      image:
+                        type: string
+                        example: "default.png"
+                      steps:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "PEEL THE POTATOES"
+                          - "POUR OIL"
+                          - "COOK"
+                      ingredients:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Potato"
+                            image:
+                              type: string
+                              example: "potato.png"
+                            macros:
+                              type: object
+                              properties:
+                                protein:
+                                  type: number
+                                  format: float
+                                  example: 30.2
+                                carbs:
+                                  type: number
+                                  format: float
+                                  example: 30.5
+                                fat:
+                                  type: number
+                                  format: float
+                                  example: 20
+                                fiber:
+                                  type: number
+                                  format: float
+                                  example: 10
+                                sugar:
+                                  type: number
+                                  format: float
+                                  example: 3
+                                saturated:
+                                  type: number
+                                  format: float
+                                  example: 15
+                                polyunsaturated:
+                                  type: number
+                                  format: float
+                                  example: 5
+                                monounsaturated:
+                                  type: number
+                                  format: float
+                                  example: 5
+                                trans:
+                                  type: number
+                                  format: float
+                                  example: 0
+                          micros:
+                              type: object
+                              properties:
+                                sodium:
+                                  type: number
+                                  format: float
+                                  example: 5
+                                potassium:
+                                  type: number
+                                  format: float
+                                  example: 6
+                                vitaminA:
+                                  type: number
+                                  format: float
+                                  example: 7
+                                vitaminC:
+                                  type: number
+                                  format: float
+                                  example: 8
+                                calcium:
+                                  type: number
+                                  format: float
+                                  example: 9
+                                iron:
+                                  type: number
+                                  format: float
+                                  example: 10
+                          ingredientsForRecipe:
+                              type: object
+                              properties:
+                                quantity:
+                                  type: number
+                                  format: float
+                                  example: 5.5
+                                unitOfMeasurement:
+                                  type: string
+                                  format: "g"
+                                  default: "g"
+                                optionality:
+                                  type: boolean
+                                  example: true
+                                  required: false
+                                  default: false
+                  message:
+                    type: string
+                    example: "Recipe successfully retrieved"
+        "404":
+          description: Conflict. Recipe does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Recipe not found"
+        "500":
+          description: Internal Server Error. Some Error occured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal Server Error"
+    delete:
+      tags:
+        - recipes
+      summary: Delete Recipe By UID
+      description: Delete Recipe By UID
+      operationId: deleteRecipeByUID
+      parameters:
+        - in: path
+          name: recipeUID
+          schema:
+            type: string
+          required: true
+          description: The UID of the Recipe
+      responses:
+        "200":
+          description: OK. Recipe succesfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Recipe successfully deleted!"
+        "404":
+          description: Not Found. Recipe does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Recipe not found"
         "500":
           description: Internal Server Error. Some Error occured
           content:
