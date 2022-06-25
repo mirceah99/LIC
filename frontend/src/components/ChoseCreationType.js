@@ -18,10 +18,11 @@ const ChoseCreationType = () => {
 					<img src={milkPng} className={classes.img} alt="bottle of milk"></img>
 					<p>
 						An ingredient is a part of a meal. A meal is composed by more
-						ingredients eg: tomatoes, oil, flour, chocolate, cheese etc... All
-						ingredients has micros and macros. Sum of all of this ingredients
-						that compose a meal will result in the meal props. You can use an
-						ingredient for mor meals, and a meal can has more ingredients.
+						ingredients e.g: tomatoes, oil, flour, chocolate, cheese etc. All
+						ingredients have micros and macros. Summing all these micros and
+						macros of the ingredients used in a recipe will result in the meal
+						properties. You can use an ingredient for different recipes and a
+						meal can contain more ingredients.
 					</p>
 				</div>
 				<Button
@@ -38,12 +39,12 @@ const ChoseCreationType = () => {
 					<h2 className={classes.title}>Meal</h2>
 					<img src={mealPng} className={classes.img} alt="bottle of milk"></img>
 					<p>
-						A meal is a dish. As we said upper a meal is composed by more
-						ingredients. In plus a meal has hew other attributes like: time for
-						preparation ustensils or a owner that made this recipe. If the owner
-						want can do the ingredients private, for example a restaurant may
-						want to do this to prevent other restaurants form stilling their
-						recipe.
+						A meal is a dish. As we said earlier, a meal is composed of more
+						ingredients. Additionally, a meal can have other attributes like
+						preparation time, utensils or a recipe creator. If the recipe
+						creator wants to make the ingredients private, he can do so. For
+						example, a restaurant may want to do this to prevent other
+						restaurants from using their recipe.
 					</p>
 				</div>
 				<Button
