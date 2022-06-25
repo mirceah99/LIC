@@ -2,6 +2,7 @@ const {
 	recipes,
 	instructions,
 	ingredientsForRecipe,
+	tags,
 } = require("../models/index");
 const { usersLikes } = require("../models/index");
 
@@ -480,10 +481,10 @@ exports.searchRecipes = async (searchOptions) => {
 					[Op.iLike]: `%${searchOptions.filter.author}%`,
 				},
 			};
-		if (searchOptions.filter.tags)
+		if (searchOptions.filter.anyOfTags)
 			queryOptions.where = {
 				"$tags.text$": {
-					[Op.iLike]: { [Op.any]: searchOptions.filter.tags },
+					[Op.iLike]: { [Op.any]: searchOptions.filter.anyOfTags },
 				},
 			};
 	}
@@ -496,15 +497,13 @@ exports.searchRecipes = async (searchOptions) => {
 	if (searchOptions.offset) {
 		queryOptions.offset = searchOptions.offset;
 	}
-	//TODO FIX THIS TAGS SEARCH
-	/*
 	queryOptions.include = [
 		{
 			model: tags,
 			attributes: ["text"],
 			as: "tags",
 		},
-	];*/
+	];
 	queryOptions.attributes = [
 		"id",
 		"name",
@@ -530,7 +529,16 @@ exports.searchRecipes = async (searchOptions) => {
 		});
 
 	let recipesResponse = [];
-	for (let recipe of recipesList) recipesResponse.push(recipe.get());
+	for (let recipe of recipesList) {
+		if (searchOptions?.filter?.allOfTags) {
+			let tags = recipe.get().tags.map((tag) => tag.get().text);
+			let hasAllOfTags = true;
+			for (let filterTag of searchOptions.filter.allOfTags)
+				if (!tags.includes(filterTag)) hasAllOfTags = false;
+			if(!hasAllOfTags) continue;
+		}
+		recipesResponse.push(recipe.get());
+	}
 	return recipesResponse;
 };
 
