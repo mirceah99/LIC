@@ -121,22 +121,6 @@ exports.getRecipeById = async (encryptedId) => {
 	}
 	// calculate total calories
 	total.calories = total.protein * 4 + total.carbs * 4 + total.fat * 9;
-	return total;
-};
-
-exports.getRecipeById = async (encryptedId) => {
-	const decryptedId = decryptId(encryptedId)[0];
-
-	//get recipe main data
-	let recipe = await recipes.findByPk(decryptedId);
-
-	//get recipe ingredients
-	const ingredients = await IngredientService.getIngredientsByRecipeId(
-		recipe.get().id
-	);
-
-	//get data for each ingredient and sum macros and micros
-	let total = await this.calculateMacros(ingredients);
 
 	recipe = recipe.dataValues;
 	let recipeResponse = {
@@ -149,12 +133,44 @@ exports.getRecipeById = async (encryptedId) => {
 		image: recipe.image,
 		id: encryptId(recipe.id),
 	};
-	// recipeResponse.steps = steps; //TODO FIX THIS STEPS THING
+	recipeResponse.steps = steps;
 	recipeResponse.ingredients = ingredients;
 	recipeResponse.total = total;
 	delete recipeResponse.total.id;
 	return recipeResponse;
 };
+
+// exports.getRecipeById = async (encryptedId) => {
+// 	const decryptedId = decryptId(encryptedId)[0];
+
+// 	//get recipe main data
+// 	let recipe = await recipes.findByPk(decryptedId);
+
+// 	//get recipe ingredients
+// 	const ingredients = await IngredientService.getIngredientsByRecipeId(
+// 		recipe.get().id
+// 	);
+
+// 	//get data for each ingredient and sum macros and micros
+// 	let total = await this.calculateMacros(ingredients);
+
+// 	recipe = recipe.dataValues;
+// 	let recipeResponse = {
+// 		name: recipe.name,
+// 		description: recipe.description,
+// 		prepTime: recipe.prepTime,
+// 		cookingTime: recipe.cookingTime,
+// 		servingSize: recipe.servingSize,
+// 		likes: recipe.likes,
+// 		image: recipe.image,
+// 		id: encryptId(recipe.id),
+// 	};
+// 	// recipeResponse.steps = steps; //TODO FIX THIS STEPS THING
+// 	recipeResponse.ingredients = ingredients;
+// 	recipeResponse.total = total;
+// 	delete recipeResponse.total.id;
+// 	return recipeResponse;
+// };
 
 exports.calculateMacros = async (ingredients) => {
 	let total = {
