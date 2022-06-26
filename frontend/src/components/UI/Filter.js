@@ -109,6 +109,7 @@ const Filter = (props) => {
 					// allOfTags: ["SWEET", "QUICK FOOD"],
 				},
 				order: order ? order : undefined,
+				limit: 150,
 			},
 		};
 
