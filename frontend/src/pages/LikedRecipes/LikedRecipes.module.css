@@ -1,0 +1,7 @@
+.centered-message {
+	margin: 10px auto;
+	display: block;
+	width: 80%;
+	font-size: 25px;
+	text-align: center;
+}

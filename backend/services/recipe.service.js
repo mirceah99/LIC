@@ -354,11 +354,15 @@ exports.linkUstensilToRecipe = async (ustensilId, recipeId) => {
 exports.like = async ({ recipeId, toDo }, userId) => {
 	const decryptedRecipeId = decryptId(recipeId)[0];
 	const decryptedUserId = decryptId(userId)[0];
-
 	if (toDo === "like") {
 		await usersLikes.create({
 			userId: decryptedUserId,
 			recipeId: decryptedRecipeId,
+		});
+		// increment likes
+		await recipes.increment("likes", {
+			by: 1,
+			where: { id: decryptedRecipeId },
 		});
 	}
 	if (toDo === "unlike") {
@@ -367,6 +371,11 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 				userId: decryptedUserId,
 				recipeId: decryptedRecipeId,
 			},
+		});
+		// decrement likes
+		await recipes.decrement("likes", {
+			by: 1,
+			where: { id: decryptedRecipeId },
 		});
 	}
 };

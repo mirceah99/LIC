@@ -1,4 +1,5 @@
 import LoginForm from "./pages/Login/LoginForm";
+import MainPage from "./pages/MainPage/MainPage";
 import "./App.css";
 import RegisterForm from "./pages/Register/RegisterForm";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -52,7 +53,7 @@ function App() {
 						element={<ChangePasswordForm />}
 					/>
 
-					<Route path="/" element={"maine page TBD"} />
+					<Route path="/" element={<MainPage />} />
 					<Route path="/meal" element={<Meal />} />
 					<Route path="/meal-details/:id" element={<MealDetails />} />
 					{authCtx.isLoggedIn && (

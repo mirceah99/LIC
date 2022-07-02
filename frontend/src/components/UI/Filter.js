@@ -17,6 +17,9 @@ import Input from "./Input";
 import useHttp from "../../hooks/use-http";
 import Meal from "../Meal";
 import displayInfoHelper from "../../helpers/displayInfo";
+import Toast from "./Toast";
+import notFound from "../../assets/img/notFound.png";
+
 const Filter = (props) => {
 	const range = { min: 0, max: 120 };
 	const [protein, setProtein] = useState([range.min, range.max]);
@@ -37,6 +40,7 @@ const Filter = (props) => {
 	const [displayInfo, steDisplayInfo] = useState(
 		displayInfoHelper.getDisplayInfo()
 	);
+	const [showToast, setShowToast] = useState({ show: false });
 	const { sendRequest } = useHttp();
 	const clearAllHandler = () => {
 		setProtein([range.min, range.max]);
@@ -55,6 +59,24 @@ const Filter = (props) => {
 		setSearchName("");
 		steDisplayInfo(displayInfoHelper.getAllFalse());
 	};
+	function premiumFuture() {
+		setShowToast({
+			show: true,
+			message: "Micros sort available just for premium users.",
+		});
+		setTimeout(() => {
+			setShowToast({ show: false });
+		}, 4000);
+	}
+	function notImplementedYet() {
+		setShowToast({
+			show: true,
+			message: "Price feature still in beta.",
+		});
+		setTimeout(() => {
+			setShowToast({ show: false });
+		}, 4000);
+	}
 	function fetchIngredients() {
 		console.log("orderBy", orderBy);
 		let order = null;
@@ -63,7 +85,7 @@ const Filter = (props) => {
 				order = [["totalProtein", "DESC"]];
 				break;
 			case "Date":
-				// order = [["date", "DESC"]]; //NOT IMPLEMENTED YET TODO
+				order = [["id", "DESC"]]; //temp solution TODO
 				break;
 			case "Calories":
 				order = [["totalCalories", "ASC"]];
@@ -150,7 +172,7 @@ const Filter = (props) => {
 							<Typography>Macros</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<p>{`Protein 🥩: ${protein[0]}g - ${protein[1]}g`}</p>
+							<span>{`Protein 🥩: ${protein[0]}g - ${protein[1]}g`}</span>
 							<Slider
 								onChange={(e, data) => {
 									setProtein(data);
@@ -161,7 +183,7 @@ const Filter = (props) => {
 								max={range.max}
 								sx={sx}
 							/>
-							<p>{`Fat 🥑: ${fat[0]}g - ${fat[1]}g`}</p>
+							<span>{`Fat 🥑: ${fat[0]}g - ${fat[1]}g`}</span>
 							<Slider
 								onChange={(e, data) => {
 									setFat(data);
@@ -172,7 +194,7 @@ const Filter = (props) => {
 								max={range.max}
 								sx={sx}
 							/>
-							<p>{`Carbo 🍞: ${carbo[0]}g - ${carbo[1]}g`}</p>
+							<span>{`Carbo 🍞: ${carbo[0]}g - ${carbo[1]}g`}</span>
 							<Slider
 								onChange={(e, data) => {
 									setCarbo(data);
@@ -195,7 +217,7 @@ const Filter = (props) => {
 						</AccordionSummary>
 						<AccordionDetails>
 							<Typography>
-								<p>{`Calories 🔥: ${calories[0]}cal - ${calories[1]}cal`}</p>
+								<span>{`Calories 🔥: ${calories[0]}cal - ${calories[1]}cal`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setCalories(data);
@@ -206,10 +228,11 @@ const Filter = (props) => {
 									max={1000}
 									sx={sx}
 								/>
-								<p>{`Price 💵: ${price[0]}ron - ${price[1]}ron`}</p>
+								<span>{`Price 💵: ${price[0]}ron - ${price[1]}ron`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setPrice(data);
+										notImplementedYet();
 									}}
 									valueLabelDisplay="auto"
 									value={price}
@@ -217,7 +240,7 @@ const Filter = (props) => {
 									max={200}
 									sx={sx}
 								/>
-								<p>{`Time ⏱: ${time[0]}min - ${time[1]}min`}</p>
+								<span>{`Time ⏱: ${time[0]}min - ${time[1]}min`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setTime(data);
@@ -231,7 +254,7 @@ const Filter = (props) => {
 							</Typography>
 						</AccordionDetails>
 					</Accordion>
-					<Accordion>
+					<Accordion onClick={premiumFuture}>
 						<AccordionSummary
 							expandIcon={<ExpandMoreIcon />}
 							aria-controls="panel2a-content"
@@ -241,7 +264,7 @@ const Filter = (props) => {
 						</AccordionSummary>
 						<AccordionDetails>
 							<Typography>
-								<p>{`Sodium 🧂: ${sodium[0]}g - ${sodium[1]}g`}</p>
+								<span>{`Sodium 🧂: ${sodium[0]}mg - ${sodium[1]}mg`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setSodium(data);
@@ -252,7 +275,7 @@ const Filter = (props) => {
 									max={60}
 									sx={sx}
 								/>
-								<p>{`Potassium 🍌: ${potassium[0]}g - ${potassium[1]}g`}</p>
+								<span>{`Potassium 🍌: ${potassium[0]}mg - ${potassium[1]}mg`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setPotassium(data);
@@ -263,7 +286,7 @@ const Filter = (props) => {
 									max={60}
 									sx={sx}
 								/>
-								<p>{`VitaminA 🥕: ${vitaminA[0]}g - ${vitaminA[1]}g`}</p>
+								<span>{`VitaminA 🥕: ${vitaminA[0]}µg - ${vitaminA[1]}µg`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setVitaminA(data);
@@ -274,7 +297,7 @@ const Filter = (props) => {
 									max={60}
 									sx={sx}
 								/>
-								<p>{`VitaminC 🍊: ${vitaminC[0]}g - ${vitaminC[1]}g`}</p>
+								<span>{`VitaminC 🍊: ${vitaminC[0]}g - ${vitaminC[1]}g`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setVitaminC(data);
@@ -285,7 +308,7 @@ const Filter = (props) => {
 									max={60}
 									sx={sx}
 								/>
-								<p>{`Calcium 🥛: ${calcium[0]}g - ${calcium[1]}g`}</p>
+								<span>{`Calcium 🥛: ${calcium[0]}g - ${calcium[1]}g`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setCalcium(data);
@@ -296,7 +319,7 @@ const Filter = (props) => {
 									max={60}
 									sx={sx}
 								/>
-								<p>{`Iron ⚓: ${iron[0]}g - ${iron[1]}g`}</p>
+								<span>{`Iron ⚓: ${iron[0]}g - ${iron[1]}g`}</span>
 								<Slider
 									onChange={(e, data) => {
 										setIron(data);
@@ -321,7 +344,7 @@ const Filter = (props) => {
 						<AccordionDetails>
 							<div className={classes["display-info"]}>
 								<div>
-									<p>{`Protein 🥩`}</p>{" "}
+									<span>{`Protein 🥩`}</span>{" "}
 									<Checkbox
 										checked={displayInfo.protein}
 										onChange={(event, checked) => {
@@ -334,7 +357,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Fat 🥑`}</p>
+									<span>{`Fat 🥑`}</span>
 									<Checkbox
 										checked={displayInfo.fat}
 										onChange={(event, checked) => {
@@ -347,7 +370,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Carbs 🍞`}</p>
+									<span>{`Carbs 🍞`}</span>
 									<Checkbox
 										checked={displayInfo.carbs}
 										onChange={(event, checked) => {
@@ -360,7 +383,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Calories 🔥`}</p>
+									<span>{`Calories 🔥`}</span>
 									<Checkbox
 										checked={displayInfo.calories}
 										onChange={(event, checked) => {
@@ -373,10 +396,11 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Price 💵:`}</p>
+									<span>{`Price 💵:`}</span>
 									<Checkbox
 										checked={displayInfo.price}
 										onChange={(event, checked) => {
+											notImplementedYet();
 											steDisplayInfo((prevState) => {
 												const newState = { ...prevState };
 												newState.price = checked;
@@ -386,7 +410,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Time ⏱`}</p>
+									<span>{`Time ⏱`}</span>
 									<Checkbox
 										checked={displayInfo.time}
 										onChange={(event, checked) => {
@@ -399,7 +423,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Sodium 🧂`}</p>
+									<span>{`Sodium 🧂`}</span>
 									<Checkbox
 										checked={displayInfo.sodium}
 										onChange={(event, checked) => {
@@ -412,7 +436,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Potassium 🍌`}</p>
+									<span>{`Potassium 🍌`}</span>
 									<Checkbox
 										checked={displayInfo.potassium}
 										onChange={(event, checked) => {
@@ -425,7 +449,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`VitaminA 🥕`}</p>
+									<span>{`VitaminA 🥕`}</span>
 									<Checkbox
 										checked={displayInfo.vitaminA}
 										onChange={(event, checked) => {
@@ -438,7 +462,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`VitaminC 🍊`}</p>
+									<span>{`VitaminC 🍊`}</span>
 									<Checkbox
 										checked={displayInfo.vitaminC}
 										onChange={(event, checked) => {
@@ -451,7 +475,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Calcium 🥛`}</p>
+									<span>{`Calcium 🥛`}</span>
 									<Checkbox
 										checked={displayInfo.calcium}
 										onChange={(event, checked) => {
@@ -464,7 +488,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Iron ⚓`}</p>
+									<span>{`Iron ⚓`}</span>
 									<Checkbox
 										checked={displayInfo.iron}
 										onChange={(event, checked) => {
@@ -477,7 +501,7 @@ const Filter = (props) => {
 									/>
 								</div>
 								<div>
-									<p>{`Likes ❤️`}</p>
+									<span>{`Likes ❤️`}</span>
 									<Checkbox
 										checked={displayInfo.like}
 										onChange={(event, checked) => {
@@ -522,7 +546,10 @@ const Filter = (props) => {
 				foundRecipes.map((recipe, index) => (
 					<Meal key={recipe} link={recipe} />
 				))}
-			{foundRecipes && foundRecipes.length === 0 && <p>No recipe found :(</p>}
+			{foundRecipes && foundRecipes.length === 0 && (
+				<img className="not-found" src={notFound} alt="no item found"></img>
+			)}
+			{showToast.show && <Toast message={showToast.message}></Toast>}
 		</>
 	);
 };
