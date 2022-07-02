@@ -56,6 +56,25 @@ const Filter = (props) => {
 		steDisplayInfo(displayInfoHelper.getAllFalse());
 	};
 	function fetchIngredients() {
+		console.log("orderBy", orderBy);
+		let order = null;
+		switch (orderBy) {
+			case "Protein":
+				order = [["totalProtein", "DESC"]];
+				break;
+			case "Date":
+				// order = [["date", "DESC"]]; //NOT IMPLEMENTED YET TODO
+				break;
+			case "Calories":
+				order = [["totalCalories", "ASC"]];
+				break;
+			case "Likes":
+				order = [["likes", "DESC"]];
+				break;
+			default:
+				break;
+		}
+
 		// set display info
 		displayInfoHelper.setDisplayInfo(displayInfo);
 		const requestConfig = {
@@ -63,7 +82,34 @@ const Filter = (props) => {
 			method: "POST",
 			headers: {},
 			body: {
-				filter: { name: searchName },
+				filter: {
+					name: searchName,
+					cookingTime: {
+						start: time[0],
+						end: time[1],
+					},
+					calories: {
+						start: calories[0],
+						end: calories[1],
+					},
+					protein: {
+						start: protein[0],
+						end: protein[1],
+					},
+					carbs: {
+						start: carbo[0],
+						end: carbo[1],
+					},
+					fat: {
+						start: fat[0],
+						end: fat[1],
+					},
+					// author: "Mircea",
+					// anyOfTags: ["SWEET", "QUICK FOOD"],
+					// allOfTags: ["SWEET", "QUICK FOOD"],
+				},
+				order: order ? order : undefined,
+				limit: 150,
 			},
 		};
 
@@ -458,9 +504,9 @@ const Filter = (props) => {
 								setOrderBy(event.target.value);
 							}}
 						>
-							<MenuItem value={"Price"}>Price</MenuItem>
+							{/* <MenuItem value={"Price"}>Price</MenuItem> NOT READY YET  */}
 							<MenuItem value={"Date"}>Date</MenuItem>
-							<MenuItem value={"Rating"}>Rating</MenuItem>
+							<MenuItem value={"Likes"}>Likes</MenuItem>
 							<MenuItem value={"Calories"}>Calories</MenuItem>
 							<MenuItem value={"Protein"}>Protein</MenuItem>
 						</Select>
@@ -472,8 +518,10 @@ const Filter = (props) => {
 				</div>
 			</Card>
 			{foundRecipes &&
-				foundRecipes.length > 1 &&
-				foundRecipes.map((recipe, index) => <Meal key={index} link={recipe} />)}
+				foundRecipes.length > 0 &&
+				foundRecipes.map((recipe, index) => (
+					<Meal key={recipe} link={recipe} />
+				))}
 			{foundRecipes && foundRecipes.length === 0 && <p>No recipe found :(</p>}
 		</>
 	);
