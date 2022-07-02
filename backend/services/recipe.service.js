@@ -382,212 +382,182 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 
 exports.searchRecipes = async (searchOptions) => {
 	let queryOptions = {};
-	if (searchOptions.filter) {
-		if (searchOptions.filter.name)
-			queryOptions.where = {
-				name: {
-					[Op.iLike]: `%${searchOptions.filter.name}%`,
-				},
-			};
-		if (searchOptions.filter.description)
-			queryOptions.where = {
-				description: {
-					[Op.iLike]: `%${searchOptions.filter.description}%`,
-				},
-			};
-		if (searchOptions.filter.prepTime?.start)
-			queryOptions.where = {
-				prepTime: {
-					[Op.gte]: searchOptions.filter.prepTime.start,
-				},
-			};
-		if (searchOptions.filter.prepTime?.end)
-			queryOptions.where = {
-				prepTime: {
-					[Op.lte]: searchOptions.filter.prepTime.end,
-				},
-			};
-		if (searchOptions.filter.cookingTime?.start)
-			queryOptions.where = {
-				cookingTime: {
-					[Op.gte]: searchOptions.filter.cookingTime.start,
-				},
-			};
-		if (searchOptions.filter.cookingTime?.end)
-			queryOptions.where = {
-				cookingTime: {
-					[Op.lte]: searchOptions.filter.cookingTime.end,
-				},
-			};
-		if (searchOptions.filter.servingSize?.start)
-			queryOptions.where = {
-				servingSize: {
-					[Op.gte]: searchOptions.filter.servingSize.start,
-				},
-			};
-		if (searchOptions.filter.servingSize?.end)
-			queryOptions.where = {
-				servingSize: {
-					[Op.lte]: searchOptions.filter.servingSize.end,
-				},
-			};
-		if (searchOptions.filter.calories?.start)
-			queryOptions.where = {
-				totalCalories: {
-					[Op.gte]: searchOptions.filter.calories.start,
-				},
-			};
-		if (searchOptions.filter.calories?.end)
-			queryOptions.where = {
-				totalCalories: {
-					[Op.lte]: searchOptions.filter.calories.end,
-				},
-			};
-		if (searchOptions.filter.protein?.start)
-			queryOptions.where = {
-				totalProtein: {
-					[Op.gte]: searchOptions.filter.protein.start,
-				},
-			};
-		if (searchOptions.filter.protein?.end)
-			queryOptions.where = {
-				totalProtein: {
-					[Op.lte]: searchOptions.filter.protein.end,
-				},
-			};
-		if (searchOptions.filter.carbs?.start)
-			queryOptions.where = {
-				totalCarbs: {
-					[Op.gte]: searchOptions.filter.carbs.start,
-				},
-			};
-		if (searchOptions.filter.carbs?.end)
-			queryOptions.where = {
-				totalCarbs: {
-					[Op.lte]: searchOptions.filter.carbs.end,
-				},
-			};
-		if (searchOptions.filter.fat?.start)
-			queryOptions.where = {
-				totalFat: {
-					[Op.gte]: searchOptions.filter.fat.start,
-				},
-			};
-		if (searchOptions.filter.fat?.end)
-			queryOptions.where = {
-				totalFat: {
-					[Op.lte]: searchOptions.filter.fat.end,
-				},
-			};
-		if (searchOptions.filter.fiber?.start)
-			queryOptions.where = {
-				totalFiber: {
-					[Op.gte]: searchOptions.filter.fiber.start,
-				},
-			};
-		if (searchOptions.filter.fiber?.end)
-			queryOptions.where = {
-				totalFiber: {
-					[Op.lte]: searchOptions.filter.fiber.end,
-				},
-			};
-		if (searchOptions.filter.sodium?.start)
-			queryOptions.where = {
-				totalSodium: {
-					[Op.gte]: searchOptions.filter.sodium.start,
-				},
-			};
-		if (searchOptions.filter.sodium?.end)
-			queryOptions.where = {
-				totalSodium: {
-					[Op.lte]: searchOptions.filter.sodium.end,
-				},
-			};
-		if (searchOptions.filter.potassium?.start)
-			queryOptions.where = {
-				totalPotassium: {
-					[Op.gte]: searchOptions.filter.potassium.start,
-				},
-			};
-		if (searchOptions.filter.potassium?.end)
-			queryOptions.where = {
-				totalPotassium: {
-					[Op.lte]: searchOptions.filter.potassium.end,
-				},
-			};
-		if (searchOptions.filter.vitaminA?.start)
-			queryOptions.where = {
-				totalVitaminA: {
-					[Op.gte]: searchOptions.filter.vitaminA.start,
-				},
-			};
-		if (searchOptions.filter.vitaminA?.end)
-			queryOptions.where = {
-				totalVitaminA: {
-					[Op.lte]: searchOptions.filter.vitaminA.end,
-				},
-			};
-		if (searchOptions.filter.vitaminC?.start)
-			queryOptions.where = {
-				totalVitaminC: {
-					[Op.gte]: searchOptions.filter.vitaminC.start,
-				},
-			};
-		if (searchOptions.filter.vitaminC?.end)
-			queryOptions.where = {
-				totalVitaminC: {
-					[Op.lte]: searchOptions.filter.vitaminC.end,
-				},
-			};
-		if (searchOptions.filter.calcium?.start)
-			queryOptions.where = {
-				totalCalcium: {
-					[Op.gte]: searchOptions.filter.calcium.start,
-				},
-			};
-		if (searchOptions.filter.calcium?.end)
-			queryOptions.where = {
-				totalCalcium: {
-					[Op.lte]: searchOptions.filter.calcium.end,
-				},
-			};
-		if (searchOptions.filter.iron?.start)
-			queryOptions.where = {
-				totalIron: {
-					[Op.gte]: searchOptions.filter.iron.start,
-				},
-			};
-		if (searchOptions.filter.iron?.end)
-			queryOptions.where = {
-				totalIron: {
-					[Op.lte]: searchOptions.filter.iron.end,
-				},
-			};
-		if (searchOptions.filter.likes?.start)
-			queryOptions.where = {
-				likes: {
-					[Op.gte]: searchOptions.filter.likes.start,
-				},
-			};
-		if (searchOptions.filter.likes?.end)
-			queryOptions.where = {
-				likes: {
-					[Op.lte]: searchOptions.filter.likes.end,
-				},
-			};
-		if (searchOptions.filter.author)
-			queryOptions.where = {
-				author: {
-					[Op.iLike]: `%${searchOptions.filter.author}%`,
-				},
-			};
-		if (searchOptions.filter.anyOfTags)
-			queryOptions.where = {
-				"$tags.text$": {
-					[Op.iLike]: { [Op.any]: searchOptions.filter.anyOfTags },
-				},
-			};
-	}
+	queryOptions.where = {
+		name: searchOptions.filter.name
+			? { [Op.iLike]: `%${searchOptions.filter.name}%` }
+			: undefined,
+		description: searchOptions.filter.description
+			? { [Op.iLike]: `%${searchOptions.filter.description}%` }
+			: undefined,
+		prepTime: searchOptions.filter.prepTime
+			? {
+					[Op.gte]:
+						searchOptions.filter.prepTime.start !== undefined
+							? searchOptions.filter.prepTime.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.prepTime.end
+						? searchOptions.filter.prepTime.end
+						: undefined,
+			  }
+			: undefined,
+		cookingTime: searchOptions.filter.cookingTime
+			? {
+					[Op.gte]:
+						searchOptions.filter.cookingTime.start !== undefined
+							? searchOptions.filter.cookingTime.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.cookingTime.end
+						? searchOptions.filter.cookingTime.end
+						: undefined,
+			  }
+			: undefined,
+		servingSize: searchOptions.filter.servingSize
+			? {
+					[Op.gte]:
+						searchOptions.filter.servingSize.start !== undefined
+							? searchOptions.filter.servingSize.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.servingSize.end
+						? searchOptions.filter.servingSize.end
+						: undefined,
+			  }
+			: undefined,
+		totalCalories: searchOptions.filter.calories
+			? {
+					[Op.gte]:
+						searchOptions.filter.calories.start !== undefined
+							? searchOptions.filter.calories.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.calories.end
+						? searchOptions.filter.calories.end
+						: undefined,
+			  }
+			: undefined,
+		totalProtein: searchOptions.filter.protein
+			? {
+					[Op.gte]:
+						searchOptions.filter.protein.start !== undefined
+							? searchOptions.filter.protein.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.protein.end
+						? searchOptions.filter.protein.end
+						: undefined,
+			  }
+			: undefined,
+		totalCarbs: searchOptions.filter.carbs
+			? {
+					[Op.gte]:
+						searchOptions.filter.carbs.start !== undefined
+							? searchOptions.filter.carbs.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.carbs.end
+						? searchOptions.filter.carbs.end
+						: undefined,
+			  }
+			: undefined,
+		totalFat: searchOptions.filter.fat
+			? {
+					[Op.gte]:
+						searchOptions.filter.fat.start !== undefined
+							? searchOptions.filter.fat.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.fat.end
+						? searchOptions.filter.fat.end
+						: undefined,
+			  }
+			: undefined,
+		totalFiber: searchOptions.filter.fiber
+			? {
+					[Op.gte]:
+						searchOptions.filter.fiber.start !== undefined
+							? searchOptions.filter.fiber.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.fiber.end
+						? searchOptions.filter.fiber.end
+						: undefined,
+			  }
+			: undefined,
+		totalSodium: searchOptions.filter.sodium
+			? {
+					[Op.gte]:
+						searchOptions.filter.sodium.start !== undefined
+							? searchOptions.filter.sodium.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.sodium.end
+						? searchOptions.filter.sodium.end
+						: undefined,
+			  }
+			: undefined,
+		totalPotassium: searchOptions.filter.potassium
+			? {
+					[Op.gte]:
+						searchOptions.filter.potassium.start !== undefined
+							? searchOptions.filter.potassium.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.potassium.end
+						? searchOptions.filter.potassium.end
+						: undefined,
+			  }
+			: undefined,
+		totalVitaminA: searchOptions.filter.vitaminA
+			? {
+					[Op.gte]:
+						searchOptions.filter.vitaminA.start !== undefined
+							? searchOptions.filter.vitaminA.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.vitaminA.end
+						? searchOptions.filter.vitaminA.end
+						: undefined,
+			  }
+			: undefined,
+		totalVitaminC: searchOptions.filter.vitaminC
+			? {
+					[Op.gte]:
+						searchOptions.filter.vitaminC.start !== undefined
+							? searchOptions.filter.vitaminC.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.vitaminC.end
+						? searchOptions.filter.vitaminC.end
+						: undefined,
+			  }
+			: undefined,
+		totalCalcium: searchOptions.filter.calcium
+			? {
+					[Op.gte]:
+						searchOptions.filter.calcium.start !== undefined
+							? searchOptions.filter.calcium.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.calcium.end
+						? searchOptions.filter.calcium.end
+						: undefined,
+			  }
+			: undefined,
+		totalIron: searchOptions.filter.iron
+			? {
+					[Op.gte]:
+						searchOptions.filter.iron.start !== undefined
+							? searchOptions.filter.iron.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.iron.end
+						? searchOptions.filter.iron.end
+						: undefined,
+			  }
+			: undefined,
+		likes: searchOptions.filter.likes
+			? {
+					[Op.gte]:
+						searchOptions.filter.likes.start !== undefined
+							? searchOptions.filter.likes.start
+							: undefined,
+					[Op.lte]: searchOptions.filter.likes.end
+						? searchOptions.filter.likes.end
+						: undefined,
+			  }
+			: undefined,
+		author: searchOptions.filter.author
+			? { [Op.iLike]: `%${searchOptions.filter.author}%` }
+			: undefined,
+	};
 	if (searchOptions.order) {
 		queryOptions.order = searchOptions.order;
 	}
@@ -625,6 +595,12 @@ exports.searchRecipes = async (searchOptions) => {
 		"totalCalcium",
 		"totalIron",
 	];
+	for (let attr in queryOptions.where) {
+		if (queryOptions.where[attr] === undefined) {
+			delete queryOptions.where[attr];
+		}
+	}
+	console.log("queryOptions.where", queryOptions.where);
 
 	let recipesList = await recipes
 		.findAll(queryOptions)
