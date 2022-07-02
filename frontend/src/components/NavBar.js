@@ -21,7 +21,13 @@ const NavBar = () => {
 				}}
 				alt="search"
 			/>
-			<img src={TrophySvg} alt="best recipes" />
+			<img
+				src={TrophySvg}
+				alt="best recipes"
+				onClick={() => {
+					navigation("/best-recipes");
+				}}
+			/>
 			<img
 				src={FavoritesSvg}
 				alt="favorites"

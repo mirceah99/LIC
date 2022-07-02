@@ -1,5 +1,7 @@
 import LoginForm from "./pages/Login/LoginForm";
 import MainPage from "./pages/MainPage/MainPage";
+import BestRecipes from "./pages/BestRecipes/BestRecipes";
+
 import "./App.css";
 import RegisterForm from "./pages/Register/RegisterForm";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -44,7 +46,7 @@ function App() {
 					<Route path="/create/ingredient" element={<CreateIngredient />} />
 					<Route path="/create/meal" element={<CreateMeal />} />
 					<Route path="/liked-recipes" element={<LikedRecipes />} />
-
+					<Route path="/best-recipes" element={<BestRecipes />} />
 					<Route path="/register" element={<RegisterForm />} />
 					<Route path="/reset-password" element={<ResetPasswordForm />} />
 
