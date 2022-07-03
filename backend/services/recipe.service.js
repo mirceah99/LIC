@@ -382,182 +382,184 @@ exports.like = async ({ recipeId, toDo }, userId) => {
 
 exports.searchRecipes = async (searchOptions) => {
 	let queryOptions = {};
-	queryOptions.where = {
-		name: searchOptions.filter.name
-			? { [Op.iLike]: `%${searchOptions.filter.name}%` }
-			: undefined,
-		description: searchOptions.filter.description
-			? { [Op.iLike]: `%${searchOptions.filter.description}%` }
-			: undefined,
-		prepTime: searchOptions.filter.prepTime
-			? {
-					[Op.gte]:
-						searchOptions.filter.prepTime.start !== undefined
-							? searchOptions.filter.prepTime.start
+	if (searchOptions.filter) {
+		queryOptions.where = {
+			name: searchOptions.filter.name
+				? { [Op.iLike]: `%${searchOptions.filter.name}%` }
+				: undefined,
+			description: searchOptions.filter.description
+				? { [Op.iLike]: `%${searchOptions.filter.description}%` }
+				: undefined,
+			prepTime: searchOptions.filter.prepTime
+				? {
+						[Op.gte]:
+							searchOptions.filter.prepTime.start !== undefined
+								? searchOptions.filter.prepTime.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.prepTime.end
+							? searchOptions.filter.prepTime.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.prepTime.end
-						? searchOptions.filter.prepTime.end
-						: undefined,
-			  }
-			: undefined,
-		cookingTime: searchOptions.filter.cookingTime
-			? {
-					[Op.gte]:
-						searchOptions.filter.cookingTime.start !== undefined
-							? searchOptions.filter.cookingTime.start
+				  }
+				: undefined,
+			cookingTime: searchOptions.filter.cookingTime
+				? {
+						[Op.gte]:
+							searchOptions.filter.cookingTime.start !== undefined
+								? searchOptions.filter.cookingTime.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.cookingTime.end
+							? searchOptions.filter.cookingTime.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.cookingTime.end
-						? searchOptions.filter.cookingTime.end
-						: undefined,
-			  }
-			: undefined,
-		servingSize: searchOptions.filter.servingSize
-			? {
-					[Op.gte]:
-						searchOptions.filter.servingSize.start !== undefined
-							? searchOptions.filter.servingSize.start
+				  }
+				: undefined,
+			servingSize: searchOptions.filter.servingSize
+				? {
+						[Op.gte]:
+							searchOptions.filter.servingSize.start !== undefined
+								? searchOptions.filter.servingSize.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.servingSize.end
+							? searchOptions.filter.servingSize.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.servingSize.end
-						? searchOptions.filter.servingSize.end
-						: undefined,
-			  }
-			: undefined,
-		totalCalories: searchOptions.filter.calories
-			? {
-					[Op.gte]:
-						searchOptions.filter.calories.start !== undefined
-							? searchOptions.filter.calories.start
+				  }
+				: undefined,
+			totalCalories: searchOptions.filter.calories
+				? {
+						[Op.gte]:
+							searchOptions.filter.calories.start !== undefined
+								? searchOptions.filter.calories.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.calories.end
+							? searchOptions.filter.calories.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.calories.end
-						? searchOptions.filter.calories.end
-						: undefined,
-			  }
-			: undefined,
-		totalProtein: searchOptions.filter.protein
-			? {
-					[Op.gte]:
-						searchOptions.filter.protein.start !== undefined
-							? searchOptions.filter.protein.start
+				  }
+				: undefined,
+			totalProtein: searchOptions.filter.protein
+				? {
+						[Op.gte]:
+							searchOptions.filter.protein.start !== undefined
+								? searchOptions.filter.protein.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.protein.end
+							? searchOptions.filter.protein.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.protein.end
-						? searchOptions.filter.protein.end
-						: undefined,
-			  }
-			: undefined,
-		totalCarbs: searchOptions.filter.carbs
-			? {
-					[Op.gte]:
-						searchOptions.filter.carbs.start !== undefined
-							? searchOptions.filter.carbs.start
+				  }
+				: undefined,
+			totalCarbs: searchOptions.filter.carbs
+				? {
+						[Op.gte]:
+							searchOptions.filter.carbs.start !== undefined
+								? searchOptions.filter.carbs.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.carbs.end
+							? searchOptions.filter.carbs.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.carbs.end
-						? searchOptions.filter.carbs.end
-						: undefined,
-			  }
-			: undefined,
-		totalFat: searchOptions.filter.fat
-			? {
-					[Op.gte]:
-						searchOptions.filter.fat.start !== undefined
-							? searchOptions.filter.fat.start
+				  }
+				: undefined,
+			totalFat: searchOptions.filter.fat
+				? {
+						[Op.gte]:
+							searchOptions.filter.fat.start !== undefined
+								? searchOptions.filter.fat.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.fat.end
+							? searchOptions.filter.fat.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.fat.end
-						? searchOptions.filter.fat.end
-						: undefined,
-			  }
-			: undefined,
-		totalFiber: searchOptions.filter.fiber
-			? {
-					[Op.gte]:
-						searchOptions.filter.fiber.start !== undefined
-							? searchOptions.filter.fiber.start
+				  }
+				: undefined,
+			totalFiber: searchOptions.filter.fiber
+				? {
+						[Op.gte]:
+							searchOptions.filter.fiber.start !== undefined
+								? searchOptions.filter.fiber.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.fiber.end
+							? searchOptions.filter.fiber.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.fiber.end
-						? searchOptions.filter.fiber.end
-						: undefined,
-			  }
-			: undefined,
-		totalSodium: searchOptions.filter.sodium
-			? {
-					[Op.gte]:
-						searchOptions.filter.sodium.start !== undefined
-							? searchOptions.filter.sodium.start
+				  }
+				: undefined,
+			totalSodium: searchOptions.filter.sodium
+				? {
+						[Op.gte]:
+							searchOptions.filter.sodium.start !== undefined
+								? searchOptions.filter.sodium.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.sodium.end
+							? searchOptions.filter.sodium.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.sodium.end
-						? searchOptions.filter.sodium.end
-						: undefined,
-			  }
-			: undefined,
-		totalPotassium: searchOptions.filter.potassium
-			? {
-					[Op.gte]:
-						searchOptions.filter.potassium.start !== undefined
-							? searchOptions.filter.potassium.start
+				  }
+				: undefined,
+			totalPotassium: searchOptions.filter.potassium
+				? {
+						[Op.gte]:
+							searchOptions.filter.potassium.start !== undefined
+								? searchOptions.filter.potassium.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.potassium.end
+							? searchOptions.filter.potassium.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.potassium.end
-						? searchOptions.filter.potassium.end
-						: undefined,
-			  }
-			: undefined,
-		totalVitaminA: searchOptions.filter.vitaminA
-			? {
-					[Op.gte]:
-						searchOptions.filter.vitaminA.start !== undefined
-							? searchOptions.filter.vitaminA.start
+				  }
+				: undefined,
+			totalVitaminA: searchOptions.filter.vitaminA
+				? {
+						[Op.gte]:
+							searchOptions.filter.vitaminA.start !== undefined
+								? searchOptions.filter.vitaminA.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.vitaminA.end
+							? searchOptions.filter.vitaminA.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.vitaminA.end
-						? searchOptions.filter.vitaminA.end
-						: undefined,
-			  }
-			: undefined,
-		totalVitaminC: searchOptions.filter.vitaminC
-			? {
-					[Op.gte]:
-						searchOptions.filter.vitaminC.start !== undefined
-							? searchOptions.filter.vitaminC.start
+				  }
+				: undefined,
+			totalVitaminC: searchOptions.filter.vitaminC
+				? {
+						[Op.gte]:
+							searchOptions.filter.vitaminC.start !== undefined
+								? searchOptions.filter.vitaminC.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.vitaminC.end
+							? searchOptions.filter.vitaminC.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.vitaminC.end
-						? searchOptions.filter.vitaminC.end
-						: undefined,
-			  }
-			: undefined,
-		totalCalcium: searchOptions.filter.calcium
-			? {
-					[Op.gte]:
-						searchOptions.filter.calcium.start !== undefined
-							? searchOptions.filter.calcium.start
+				  }
+				: undefined,
+			totalCalcium: searchOptions.filter.calcium
+				? {
+						[Op.gte]:
+							searchOptions.filter.calcium.start !== undefined
+								? searchOptions.filter.calcium.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.calcium.end
+							? searchOptions.filter.calcium.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.calcium.end
-						? searchOptions.filter.calcium.end
-						: undefined,
-			  }
-			: undefined,
-		totalIron: searchOptions.filter.iron
-			? {
-					[Op.gte]:
-						searchOptions.filter.iron.start !== undefined
-							? searchOptions.filter.iron.start
+				  }
+				: undefined,
+			totalIron: searchOptions.filter.iron
+				? {
+						[Op.gte]:
+							searchOptions.filter.iron.start !== undefined
+								? searchOptions.filter.iron.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.iron.end
+							? searchOptions.filter.iron.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.iron.end
-						? searchOptions.filter.iron.end
-						: undefined,
-			  }
-			: undefined,
-		likes: searchOptions.filter.likes
-			? {
-					[Op.gte]:
-						searchOptions.filter.likes.start !== undefined
-							? searchOptions.filter.likes.start
+				  }
+				: undefined,
+			likes: searchOptions.filter.likes
+				? {
+						[Op.gte]:
+							searchOptions.filter.likes.start !== undefined
+								? searchOptions.filter.likes.start
+								: undefined,
+						[Op.lte]: searchOptions.filter.likes.end
+							? searchOptions.filter.likes.end
 							: undefined,
-					[Op.lte]: searchOptions.filter.likes.end
-						? searchOptions.filter.likes.end
-						: undefined,
-			  }
-			: undefined,
-		author: searchOptions.filter.author
-			? { [Op.iLike]: `%${searchOptions.filter.author}%` }
-			: undefined,
-	};
+				  }
+				: undefined,
+			author: searchOptions.filter.author
+				? { [Op.iLike]: `%${searchOptions.filter.author}%` }
+				: undefined,
+		};
+	}
 	if (searchOptions.order) {
 		queryOptions.order = searchOptions.order;
 	}
